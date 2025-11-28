@@ -1,17 +1,12 @@
 <template>
   <div class="dashboard-wrapper">
     <!-- Header/Navbar -->
-    <header class="dashboard-header">
+    <!-- <header class="dashboard-header">
       <div class="header-content">
         <div class="logo-section">
-          <img 
-            src="@/assets/logo-yepez.svg"  
-            alt="Yépez" 
-            class="header-logo"
-            @error="handleImageError"
-          />
+          <img src="@/assets/logo-yepez.svg" alt="Yépez" class="header-logo" @error="handleImageError" />
         </div>
-        
+
         <nav class="nav-menu">
           <a href="#" class="nav-link active" @click.prevent="currentView = 'dashboard'">
             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -48,7 +43,7 @@
               </svg>
             </div>
             <div class="user-details">
-              <span class="user-name">{{ user.name }}</span>
+              <span class="user-name">{{ userName }}</span>
               <span class="user-role">Cliente</span>
             </div>
           </div>
@@ -61,7 +56,9 @@
           </button>
         </div>
       </div>
-    </header>
+    </header> -->
+
+    <Navbar></Navbar>
 
     <!-- Main Content -->
     <main class="dashboard-main">
@@ -69,9 +66,24 @@
         <!-- Welcome Section -->
         <section class="welcome-section">
           <div class="welcome-text">
-            <h1 class="welcome-title">¡Hola, {{ user.name }}! 👋</h1>
+            <h1 class="welcome-title">¡Hola, {{ userName }}! 👋</h1>
             <p class="welcome-subtitle">Bienvenido a tu portal de recompensas</p>
           </div>
+        </section>
+
+
+        <section class="register-ticket-section">
+          <h2 class="section-title">Registrar nuevo ticket</h2>
+          <form @submit.prevent="registerTicket" class="ticket-form">
+            <input type="text" placeholder="Número de ticket" v-model="ticketForm.numero" required />
+            <input type="date" placeholder="Fecha" v-model="ticketForm.fecha" required />
+            <input type="number" placeholder="Monto total" v-model="ticketForm.monto" required min="0" />
+            <button type="submit" class="action-button primary" :disabled="isRegisteringTicket">
+              <span v-if="!isRegisteringTicket">Registrar ticket</span>
+              <span v-else>Cargando...</span>
+            </button>
+          </form>
+          <div v-if="ticketError" class="modal-error" style="margin-top:12px;">{{ ticketError }}</div>
         </section>
 
         <!-- Balance Card -->
@@ -87,7 +99,7 @@
               <div class="balance-info">
                 <span class="balance-label">Puntos disponibles</span>
                 <div class="balance-amount">
-                  <span class="amount-number">{{ formatPoints(balance) }}</span>
+                  <span class="amount-number">{{ userBalance }}</span>
                   <span class="amount-text">puntos</span>
                 </div>
               </div>
@@ -171,11 +183,7 @@
           </div>
 
           <div v-else class="rewards-grid">
-            <div 
-              v-for="reward in featuredRewards" 
-              :key="reward.id" 
-              class="reward-card"
-            >
+            <div v-for="reward in featuredRewards" :key="reward.id" class="reward-card">
               <div class="reward-image">
                 <img :src="reward.image || '/placeholder-reward.jpg'" :alt="reward.name">
                 <div v-if="reward.stock < 5 && reward.stock > 0" class="stock-badge low">
@@ -191,22 +199,51 @@
                 <div class="reward-footer">
                   <div class="reward-points">
                     <svg class="points-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                      <polygon
+                        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                      </polygon>
                     </svg>
                     <span>{{ formatPoints(reward.points_required) }}</span>
                   </div>
-                  <button 
-                    class="redeem-button" 
-                    :disabled="reward.stock === 0 || balance < reward.points_required"
-                    @click="openRedeemModal(reward)"
-                  >
-                    {{ reward.stock === 0 ? 'Agotado' : balance < reward.points_required ? 'Puntos insuficientes' : 'Canjear' }}
-                  </button>
+                  <button class="redeem-button" :disabled="reward.stock === 0 || balance < reward.points_required"
+                    @click="openRedeemModal(reward)">
+                    {{ reward.stock === 0 ? 'Agotado' : balance < reward.points_required ? 'Puntos insuficientes'
+                      : 'Canjear' }} </button>
                 </div>
               </div>
             </div>
           </div>
         </section>
+
+
+        <section class="tickets-history">
+          <h3 class="section-title" style="margin-top:1.5rem;">Últimos tickets registrados</h3>
+          <table v-if="tickets.length > 0">
+            <thead>
+              <tr>
+                <th>Número</th>
+                <th>Fecha</th>
+                <th>Monto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="ticket in tickets.slice(0, 5)" :key="ticket.id">
+                <td>{{ ticket.numero }}</td>
+                <td>{{ ticket.fecha }}</td>
+                <td>${{ ticket.monto }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div v-else class="empty-state">
+            <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <p>No tienes tickets registrados</p>
+          </div>
+        </section>
+
 
         <!-- Recent Transactions -->
         <section class="transactions-section">
@@ -236,13 +273,10 @@
           </div>
 
           <div v-else class="transactions-list">
-            <div 
-              v-for="transaction in recentTransactions" 
-              :key="transaction.id"
-              class="transaction-item"
-            >
+            <div v-for="transaction in recentTransactions" :key="transaction.id" class="transaction-item">
               <div class="transaction-icon" :class="transaction.type">
-                <svg v-if="transaction.type === 'add'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg v-if="transaction.type === 'add'" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2">
                   <line x1="12" y1="5" x2="12" y2="19"></line>
                   <line x1="5" y1="12" x2="19" y2="12"></line>
                 </svg>
@@ -273,14 +307,14 @@
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
           </button>
-          
+
           <div v-if="selectedReward" class="modal-body">
             <div class="modal-image">
               <img :src="selectedReward.image || '/placeholder-reward.jpg'" :alt="selectedReward.name">
             </div>
             <h3 class="modal-title">{{ selectedReward.name }}</h3>
             <p class="modal-description">{{ selectedReward.description }}</p>
-            
+
             <div class="modal-points">
               <span class="points-label">Costo:</span>
               <span class="points-value">{{ formatPoints(selectedReward.points_required) }} puntos</span>
@@ -313,15 +347,12 @@
               <button class="modal-button secondary" @click="closeRedeemModal" :disabled="isRedeeming">
                 Cancelar
               </button>
-              <button 
-                class="modal-button primary" 
-                @click="confirmRedeem" 
-                :disabled="isRedeeming"
-              >
+              <button class="modal-button primary" @click="confirmRedeem" :disabled="isRedeeming">
                 <span v-if="!isRedeeming">Confirmar canje</span>
                 <span v-else class="button-loading">
                   <svg class="spinner-small" viewBox="0 0 24 24">
-                    <circle class="spinner-circle" cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="3"></circle>
+                    <circle class="spinner-circle" cx="12" cy="12" r="10" fill="none" stroke="currentColor"
+                      stroke-width="3"></circle>
                   </svg>
                   Procesando...
                 </span>
@@ -338,16 +369,68 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
-// import axios from 'axios';
+import Navbar from '@/layouts/Admin/Navbar.vue';
+
+
+const ticketForm = ref({
+  numero: '',
+  fecha: '',
+  monto: ''
+});
+
+const tickets = ref([]); // Aquí guardas los tickets registrados
+
+const isRegisteringTicket = ref(false);
+const ticketError = ref('');
+
+const registerTicket = async () => {
+  ticketError.value = '';
+  isRegisteringTicket.value = true;
+
+  // Validación básica
+  if (!ticketForm.value.numero || !ticketForm.value.fecha || !ticketForm.value.monto || ticketForm.value.monto <= 0) {
+    ticketError.value = 'Completa todos los campos correctamente.';
+    isRegisteringTicket.value = false;
+    return;
+  }
+
+  try {
+    // Simulación de API (puedes cambiar esto por tu lógica de axios)
+    await new Promise(res => setTimeout(res, 1200));
+    const nuevoTicket = { ...ticketForm.value, id: Date.now() };
+    tickets.value.unshift(nuevoTicket); // Lo agregas al inicio
+
+    // Limpia el formulario
+    ticketForm.value = { numero: '', fecha: '', monto: '' };
+
+    // Puedes recargar transacciones aquí si el registro de ticket otorga puntos
+
+  } catch (e) {
+    ticketError.value = 'Error al registrar el ticket.';
+  } finally {
+    isRegisteringTicket.value = false;
+  }
+};
+
 
 const router = useRouter();
 const authStore = useAuthStore();
+// console.log(authStore.user);
 
 // State
-const user = ref({
-  name: 'Juan Pérez',
-  email: 'juan@ejemplo.com'
+const userName = computed(() => { // <--- AÑADE ESTA PROPIEDAD
+  // Usa el nombre de la store si existe; si no, usa 'Cliente' como fallback
+  return authStore.user?.name || 'Cliente';
 });
+
+const userBalance = computed(() => {
+  return authStore.formattedBalance;
+});
+
+const numericBalance = computed(() => {
+  return authStore.balance;
+});
+
 
 const balance = ref(0);
 const transactions = ref([]);
@@ -369,8 +452,10 @@ const featuredRewards = computed(() => {
 });
 
 const availableRewards = computed(() => {
-  return rewards.value.filter(r => r.stock > 0 && r.points_required <= balance.value).length;
+  // 🚨 Usa el nuevo numericBalance para la lógica de cálculo
+  return rewards.value.filter(r => r.stock > 0 && r.points_required <= numericBalance.value).length;
 });
+
 
 const recentTransactions = computed(() => {
   return transactions.value.slice(0, 5);
@@ -397,7 +482,7 @@ const fetchBalance = async () => {
   try {
     // const response = await axios.get('/api/balance');
     // balance.value = response.data.balance;
-    
+
     // Datos de ejemplo
     balance.value = 15000;
   } catch (error) {
@@ -410,7 +495,7 @@ const fetchTransactions = async () => {
   try {
     // const response = await axios.get('/api/transactions');
     // transactions.value = response.data;
-    
+
     // Datos de ejemplo
     transactions.value = [
       { id: 1, type: 'add', description: 'Compra de batería 12V', points: 500, created_at: '2024-11-05' },
@@ -430,7 +515,7 @@ const fetchRedemptions = async () => {
   try {
     // const response = await axios.get('/api/redemptions');
     // redemptions.value = response.data;
-    
+
     // Datos de ejemplo
     redemptions.value = [
       { id: 1, reward_name: 'Tarjeta de regalo $500', status: 'completed' },
@@ -446,54 +531,54 @@ const fetchRewards = async () => {
   try {
     // const response = await axios.get('/api/rewards');
     // rewards.value = response.data;
-    
+
     // Datos de ejemplo
     rewards.value = [
-      { 
-        id: 1, 
-        name: 'Tarjeta de regalo $500', 
+      {
+        id: 1,
+        name: 'Tarjeta de regalo $500',
         description: 'Tarjeta de regalo válida en tiendas participantes',
-        points_required: 5000, 
+        points_required: 5000,
         stock: 10,
         image: null
       },
-      { 
-        id: 2, 
-        name: 'Descuento 20% en servicio', 
+      {
+        id: 2,
+        name: 'Descuento 20% en servicio',
         description: 'Descuento aplicable en tu próximo servicio',
-        points_required: 2000, 
+        points_required: 2000,
         stock: 25,
         image: null
       },
-      { 
-        id: 3, 
-        name: 'Kit de herramientas', 
+      {
+        id: 3,
+        name: 'Kit de herramientas',
         description: 'Kit completo de herramientas básicas',
-        points_required: 8000, 
+        points_required: 8000,
         stock: 3,
         image: null
       },
-      { 
-        id: 4, 
-        name: 'Tarjeta de regalo $1000', 
+      {
+        id: 4,
+        name: 'Tarjeta de regalo $1000',
         description: 'Tarjeta de regalo de mayor denominación',
-        points_required: 10000, 
+        points_required: 10000,
         stock: 5,
         image: null
       },
-      { 
-        id: 5, 
-        name: 'Cupón de gasolina $200', 
+      {
+        id: 5,
+        name: 'Cupón de gasolina $200',
         description: 'Cupón canjeable en estaciones de servicio',
-        points_required: 3000, 
+        points_required: 3000,
         stock: 15,
         image: null
       },
-      { 
-        id: 6, 
-        name: 'Membresía Premium 1 mes', 
+      {
+        id: 6,
+        name: 'Membresía Premium 1 mes',
         description: 'Un mes de acceso premium con beneficios exclusivos',
-        points_required: 4000, 
+        points_required: 4000,
         stock: 0,
         image: null
       }
@@ -519,40 +604,40 @@ const closeRedeemModal = () => {
 
 const confirmRedeem = async () => {
   if (!selectedReward.value) return;
-  
+
   isRedeeming.value = true;
   redeemError.value = '';
-  
+
   try {
     // const response = await axios.post('/api/redeem', {
     //   reward_id: selectedReward.value.id
     // });
-    
+
     // Simulación
     await new Promise(resolve => setTimeout(resolve, 1500));
-    
+
     // Actualizar saldo
     balance.value -= selectedReward.value.points_required;
-    
+
     // Actualizar stock
     const rewardIndex = rewards.value.findIndex(r => r.id === selectedReward.value.id);
     if (rewardIndex !== -1) {
       rewards.value[rewardIndex].stock--;
     }
-    
+
     // Cerrar modal
     closeRedeemModal();
-    
+
     // Mostrar mensaje de éxito (puedes usar un toast/notification)
     alert('¡Canje realizado con éxito!');
-    
+
     // Recargar datos
     await Promise.all([
       fetchBalance(),
       fetchTransactions(),
       fetchRedemptions()
     ]);
-    
+
   } catch (error) {
     redeemError.value = error.response?.data?.message || 'Error al procesar el canje. Intenta nuevamente.';
   } finally {
@@ -596,139 +681,7 @@ onMounted(async () => {
   background: #f8fafc;
 }
 
-/* Header */
-.dashboard-header {
-  background: white;
-  border-bottom: 1px solid #e2e8f0;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
 
-.header-content {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 1rem 2rem;
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-}
-
-.logo-section {
-  flex-shrink: 0;
-}
-
-.header-logo {
-  height: 2.5rem;
-  width: auto;
-}
-
-.nav-menu {
-  display: flex;
-  gap: 0.5rem;
-  flex: 1;
-}
-
-.nav-link {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.625rem 1rem;
-  border-radius: 0.5rem;
-  text-decoration: none;
-  color: #64748b;
-  font-weight: 500;
-  font-size: 0.9375rem;
-  transition: all 0.2s;
-}
-
-.nav-link:hover {
-  background: #f1f5f9;
-  color: #1e3a8a;
-}
-
-.nav-link.active {
-  background: #1e3a8a;
-  color: white;
-}
-
-.nav-icon {
-  width: 1.25rem;
-  height: 1.25rem;
-  stroke-width: 2;
-}
-
-.user-section {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-left: auto;
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.user-avatar {
-  width: 2.5rem;
-  height: 2.5rem;
-  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-}
-
-.user-avatar svg {
-  width: 1.5rem;
-  height: 1.5rem;
-  stroke-width: 2;
-}
-
-.user-details {
-  display: flex;
-  flex-direction: column;
-}
-
-.user-name {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #1e293b;
-}
-
-.user-role {
-  font-size: 0.75rem;
-  color: #64748b;
-}
-
-.logout-button {
-  width: 2.5rem;
-  height: 2.5rem;
-  background: #fee2e2;
-  border: none;
-  border-radius: 0.5rem;
-  color: #dc2626;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-}
-
-.logout-button:hover {
-  background: #fecaca;
-  transform: translateY(-2px);
-}
-
-.logout-button svg {
-  width: 1.25rem;
-  height: 1.25rem;
-  stroke-width: 2;
-}
 
 /* Main Content */
 .dashboard-main {
@@ -753,6 +706,7 @@ onMounted(async () => {
     opacity: 0;
     transform: translateY(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -782,6 +736,7 @@ onMounted(async () => {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1043,7 +998,9 @@ onMounted(async () => {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .rewards-grid {
@@ -1588,5 +1545,48 @@ onMounted(async () => {
   .modal-actions {
     grid-template-columns: 1fr;
   }
+}
+
+.register-ticket-section,
+.tickets-history {
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.ticket-form {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.ticket-form input {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+  font-size: 1rem;
+  min-width: 180px;
+  flex: 1;
+}
+
+.ticket-form button {
+  min-width: 180px;
+}
+
+.tickets-history table {
+  width: 100%;
+  border-spacing: 0;
+  margin-top: 1rem;
+}
+
+.tickets-history th,
+.tickets-history td {
+  padding: 0.6rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 1rem;
 }
 </style>

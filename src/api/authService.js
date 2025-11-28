@@ -1,44 +1,62 @@
-// src/api/authService.js (Ajustado)
-// Importamos AMBAS instancias
-import { axiosClient, sanctumClient } from './axiosClient'; 
+// src/api/authService.js - SIMPLIFICADO
+import { axiosClient } from './axiosClient';
 
-// Esta ruta NO tiene el prefijo /api
-const CSRF_COOKIE_ROUTE = '/sanctum/csrf-cookie'; 
-// Estas rutas SÍ tienen el prefijo /api (gestionado por axiosClient)
-const LOGIN_ROUTE = '/login'; 
-// ...
+class AuthService {
+    constructor() {
+        const token = localStorage.getItem('auth_token');
+        if (token) {
+            axiosClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        }
+    }
 
-/**
- * Llama al endpoint de Sanctum para obtener el token CSRF (cookie).
- */
-async function getCsrfToken() {
-    try {
-        // Usa la instancia que NO tiene el prefijo /api
-        await sanctumClient.get(CSRF_COOKIE_ROUTE); 
-        console.log("Token CSRF obtenido. Cookie establecida.");
-        return true;
-    } catch (error) {
-        // ... (manejo de errores)
+    async login(email, password) {
+        try {
+            console.log('🔑 Enviando credenciales...');
+            
+            const response = await axiosClient.post('/login', {
+                email,
+                password
+            });
+
+            console.log('✅ Login exitoso');
+            
+            if (response.data.token) {
+                localStorage.setItem('auth_token', response.data.token);
+                axiosClient.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+            }
+            
+            return response.data;
+
+        } catch (error) {
+            console.error('❌ Error en login:', error);
+            
+            if (error.response?.status === 422) {
+                throw new Error('Email o contraseña incorrectos');
+            } else {
+                throw new Error(error.response?.data?.message || 'Error de conexión');
+            }
+        }
+    }
+
+    async logout() {
+        try {
+            await axiosClient.post('/logout');
+        } catch (error) {
+            console.error('Error en logout:', error);
+        } finally {
+            localStorage.removeItem('auth_token');
+            delete axiosClient.defaults.headers.common['Authorization'];
+        }
+    }
+
+    async getUser() {
+        const response = await axiosClient.get('/user');
+        return response.data.user;
+    }
+
+    isAuthenticated() {
+        return !!localStorage.getItem('auth_token');
     }
 }
 
-/**
- * Intenta iniciar sesión. (Usa la instancia con prefijo /api)
- */
-async function login(email, password) {
-    await getCsrfToken(); // Primero obtenemos la cookie
-    
-    // Luego usamos la instancia normal, ya que /login es una ruta API
-    const response = await axiosClient.post(LOGIN_ROUTE, {
-        email,
-        password
-    });
-    // ...
-}
-
-// ... (El resto de las funciones usan axiosClient)
-
-export default {
-    login,
-    // ...
-};
+export default new AuthService();
