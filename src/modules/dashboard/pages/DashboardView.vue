@@ -369,7 +369,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
-import Navbar from '@/layouts/Admin/Navbar.vue';
+import Navbar from '@/layouts/Sucursales/Navbar.vue';
 
 
 const ticketForm = ref({

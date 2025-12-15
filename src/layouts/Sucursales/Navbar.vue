@@ -63,7 +63,7 @@ import { useAuthStore } from '@/stores/authStore';
 
 const authStore = useAuthStore();
 
-const userName = computed(() => { 
+const userName = computed(() => {
     return authStore.user?.name || 'Cliente';
 });
 
@@ -71,9 +71,14 @@ const handleImageError = (e) => {
     e.target.style.display = 'none';
 };
 
-const handleLogout = () => {
-    // Tu lógica de logout aquí
-    console.log('Logout clicked');
+const handleLogout = async () => {
+    try {
+        await authStore.handleLogout();
+        console.log('Logout iniciado desde el componente.');
+
+    } catch (error) {
+        console.error('Error al intentar cerrar sesión:', error);
+    }
 };
 </script>
 

@@ -21,7 +21,7 @@ export const useAuthStore = defineStore('auth', {
             const balance = state.user?.balance || 0;
             return new Intl.NumberFormat('es-MX').format(balance);
         },
-        userName: (state) => state.user?.name || 'Cliente'
+        userName: (state) => state.user?.name || 'sucursal'
     },
 
     actions: {
@@ -41,7 +41,7 @@ export const useAuthStore = defineStore('auth', {
                 if (userData.roles && userData.roles.length > 0) {
                     this.userRole = userData.roles[0].name;
                 } else {
-                    this.userRole = 'client';
+                    this.userRole = 'sucursal';
                 }
 
                 // La propiedad authChecked ahora se maneja en el router guard en la recarga inicial.
@@ -85,7 +85,7 @@ export const useAuthStore = defineStore('auth', {
                 if (userData.roles && userData.roles.length > 0) {
                     this.userRole = userData.roles[0].name;
                 } else {
-                    this.userRole = 'client';
+                    this.userRole = 'sucursal';
                 }
                 
                 return true;
