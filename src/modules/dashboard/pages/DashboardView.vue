@@ -71,25 +71,12 @@
           </div>
         </section>
 
-
-        <!-- <section class="register-ticket-section">
-          <h2 class="section-title">Registrar nuevo ticket</h2>
-          <form @submit.prevent="registerTicket" class="ticket-form">
-            <input type="text" placeholder="Número de ticket" v-model="ticketForm.numero" required />
-            <input type="date" placeholder="Fecha" v-model="ticketForm.fecha" required />
-            <input type="number" placeholder="Monto total" v-model="ticketForm.monto" required min="0" />
-            <button type="submit" class="action-button primary" :disabled="isRegisteringTicket">
-              <span v-if="!isRegisteringTicket">Registrar ticket</span>
-              <span v-else>Cargando...</span>
-            </button>
-          </form>
-          <div v-if="ticketError" class="modal-error" style="margin-top:12px;">{{ ticketError }}</div>
-        </section> -->
-
-        <TicketForm></TicketForm>
+        <TicketForm @ticket-registered="handleTicketRegistered" />
 
         <!-- Balance Card -->
-        <section class="balance-section">
+        <BalanceCard></BalanceCard>
+
+        <!-- <section class="balance-section">
           <div class="balance-card">
             <div class="balance-header">
               <div class="balance-icon">
@@ -124,7 +111,7 @@
               </button>
             </div>
           </div>
-        </section>
+        </section> -->
 
         <!-- Stats Grid -->
         <section class="stats-grid">
@@ -373,58 +360,28 @@ import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
 import Navbar from '@/layouts/Sucursales/Navbar.vue';
 import TicketForm from '@/components/Forms/Sucursales/TicketForm.vue';
+import BalanceCard from '@/components/Sucursales/BalanceCard.vue';
 
-
-
-const ticketForm = ref({
-  numero: '',
-  fecha: '',
-  monto: ''
-});
 
 const tickets = ref([]); // Aquí guardas los tickets registrados
 
-const isRegisteringTicket = ref(false);
-const ticketError = ref('');
 
-const registerTicket = async () => {
-  ticketError.value = '';
-  isRegisteringTicket.value = true;
 
-  // Validación básica
-  if (!ticketForm.value.numero || !ticketForm.value.fecha || !ticketForm.value.monto || ticketForm.value.monto <= 0) {
-    ticketError.value = 'Completa todos los campos correctamente.';
-    isRegisteringTicket.value = false;
-    return;
-  }
-
-  try {
-    // Simulación de API (puedes cambiar esto por tu lógica de axios)
-    await new Promise(res => setTimeout(res, 1200));
-    const nuevoTicket = { ...ticketForm.value, id: Date.now() };
-    tickets.value.unshift(nuevoTicket); // Lo agregas al inicio
-
-    // Limpia el formulario
-    ticketForm.value = { numero: '', fecha: '', monto: '' };
-
-    // Puedes recargar transacciones aquí si el registro de ticket otorga puntos
-
-  } catch (e) {
-    ticketError.value = 'Error al registrar el ticket.';
-  } finally {
-    isRegisteringTicket.value = false;
-  }
-};
 
 
 const router = useRouter();
 const authStore = useAuthStore();
 // console.log(authStore.user);
 
+const handleTicketRegistered = () => {
+  // Cuando el formulario indica que la operación (registro) fue exitosa:
+  // 2. Llamamos a la acción del store para obtener el saldo fresco del servidor.
+  authStore.refreshUserBalance();
+};
 // State
 const userName = computed(() => { // <--- AÑADE ESTA PROPIEDAD
   // Usa el nombre de la store si existe; si no, usa 'Cliente' como fallback
-  return authStore.user?.name || 'Cliente';
+  return authStore.user?.name || 'Sucursal';
 });
 
 const userBalance = computed(() => {
@@ -1549,48 +1506,5 @@ onMounted(async () => {
   .modal-actions {
     grid-template-columns: 1fr;
   }
-}
-
-.register-ticket-section,
-.tickets-history {
-  background: white;
-  border-radius: 1rem;
-  padding: 2rem;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-}
-
-.ticket-form {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  margin-top: 1rem;
-}
-
-.ticket-form input {
-  padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
-  border: 1px solid #e2e8f0;
-  font-size: 1rem;
-  min-width: 180px;
-  flex: 1;
-}
-
-.ticket-form button {
-  min-width: 180px;
-}
-
-.tickets-history table {
-  width: 100%;
-  border-spacing: 0;
-  margin-top: 1rem;
-}
-
-.tickets-history th,
-.tickets-history td {
-  padding: 0.6rem 1rem;
-  text-align: left;
-  border-bottom: 1px solid #e2e8f0;
-  font-size: 1rem;
 }
 </style>

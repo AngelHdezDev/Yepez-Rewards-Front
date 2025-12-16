@@ -10,8 +10,7 @@
                 <span v-else>Cargando...</span>
             </button>
         </form>
-        <div v-if="ticketError" class="modal-error" style="margin-top:12px;">{{ ticketError }}</div>
-        <div v-if="ticketSuccess" class="modal-success" style="margin-top:12px;">{{ ticketSuccess }}</div>
+
     </section>
 </template>
 
@@ -126,41 +125,135 @@ const registerTicket = async () => {
             issue_date: formatIssueDate(ticketForm.value.fecha),
         };
 
+        console.log("📤 Enviando ticket...", payload);
+
+        // Guardar balance inicial para comparar después
+        const initialBalance = authStore.balance;
+        console.log("💰 Balance inicial:", initialBalance);
 
         const response = await ticketsService.registerTicket(payload);
-        console.log("Respuesta completa al registrar:", response);
-        console.log("Entra try");
+        console.log("✅ Respuesta del backend:", response);
 
-        // Éxito
-        Swal.fire({
-            icon: 'success',
-            title: '¡Registro Exitoso!',
-            html: response.message || 'Ticket registrado correctamente',
-            confirmButtonText: 'Aceptar',
+        // 🔥 OPCIÓN 1: ESPERAR Y LUEGO REFRESCAR
+        // Mostrar mensaje de procesamiento
+        const processingAlert = Swal.fire({
+            title: 'Procesando Ticket...',
+            text: 'El ticket está siendo procesado. El balance se actualizará en unos segundos.',
+            icon: 'info',
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            timer: 4000, // Cerrar automáticamente después de 4 segundos
+            didOpen: () => {
+                Swal.showLoading();
+            }
         });
 
-        // Limpiar formulario
-        ticketForm.value = {
-            numero: '',
-            fecha: new Date().toISOString().split('T')[0],
-            monto: null
-        };
+        // Esperar 4 segundos para que el Job termine de procesar
+        setTimeout(async () => {
+            try {
+                console.log("🔄 Refrescando balance después de espera...");
 
-        // Emitir evento
-        emit('ticket-registered');
+                // Forzar actualización del balance
+                await authStore.refreshUserBalance();
+
+                const newBalance = authStore.balance;
+                const pointsEarned = newBalance - initialBalance;
+
+                console.log("📊 Resultado después de espera:", {
+                    initialBalance,
+                    newBalance,
+                    pointsEarned,
+                    actualizado: newBalance > initialBalance
+                });
+
+                // Cerrar alerta de procesamiento si aún está abierta
+                if (Swal.isVisible()) {
+                    Swal.close();
+                }
+
+                // Mostrar mensaje de éxito con balance actualizado
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Ticket Procesado!',
+                    html: `
+                        <p>${response.message}</p>
+                        ${pointsEarned > 0 ?
+                            `<p><strong>Puntos ganados:</strong> ${pointsEarned}</p>`
+                            : '<p><small>Este ticket no generó puntos</small></p>'
+                        }
+                        <p><strong>Nuevo saldo:</strong> ${authStore.formattedBalance} puntos</p>
+                        <hr>
+                        <small class="text-muted">Balance anterior: ${initialBalance.toLocaleString()} puntos</small>
+                    `,
+                    confirmButtonText: 'Aceptar',
+                    showCloseButton: true
+                });
+
+            } catch (refreshError) {
+                console.error("❌ Error al actualizar balance:", refreshError);
+
+                if (Swal.isVisible()) {
+                    Swal.close();
+                }
+
+                // Mostrar éxito pero con advertencia
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Ticket Registrado',
+                    html: `
+                        <p>${response.message}</p>
+                        <p class="text-warning"><small>El balance se actualizará automáticamente en breve.</small></p>
+                        <p><strong>Saldo actual:</strong> ${authStore.formattedBalance} puntos</p>
+                    `,
+                    confirmButtonText: 'Entendido'
+                });
+            }
+
+            // Limpiar formulario después de todo
+            ticketForm.value = {
+                numero: '',
+                fecha: new Date().toISOString().split('T')[0],
+                monto: null
+            };
+
+            // Emitir evento al padre
+            emit('ticket-registered', {
+                success: true,
+                ticketNumber: payload.ticket_number,
+                pointsEarned: pointsEarned || 0
+            });
+
+        }, 4000); // Esperar 4 segundos
+
+        // ⚠️ NOTA: El finally se ejecuta inmediatamente, no espera el setTimeout
+        // Por eso movemos el finally lógico dentro del setTimeout
 
     } catch (error) {
-        console.error("Error completo al registrar:", error);
+        console.error("❌ Error al registrar ticket:", {
+            message: error.message,
+            response: error.response?.data,
+            status: error.response?.status
+        });
 
         // Mostrar error específico
+        let errorMessage = error.message || 'Error al registrar el ticket';
+
+        // Si es error de validación del backend
+        if (error.response?.status === 422 && error.response?.data?.errors) {
+            const errors = error.response.data.errors;
+            errorMessage = Object.values(errors).flat().join(', ');
+        }
+
         Swal.fire({
             icon: 'error',
-            title: 'Error',
-            text: error.message || 'Error al registrar el ticket',
+            title: 'Error al Registrar',
+            text: errorMessage,
             confirmButtonText: 'Entendido',
+            showCloseButton: true
         });
 
     } finally {
+        // Solo desactivamos el loading, pero el formulario se limpia después del setTimeout
         isRegisteringTicket.value = false;
     }
 };
