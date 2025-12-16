@@ -72,7 +72,7 @@
         </section>
 
 
-        <section class="register-ticket-section">
+        <!-- <section class="register-ticket-section">
           <h2 class="section-title">Registrar nuevo ticket</h2>
           <form @submit.prevent="registerTicket" class="ticket-form">
             <input type="text" placeholder="Número de ticket" v-model="ticketForm.numero" required />
@@ -84,7 +84,9 @@
             </button>
           </form>
           <div v-if="ticketError" class="modal-error" style="margin-top:12px;">{{ ticketError }}</div>
-        </section>
+        </section> -->
+
+        <TicketForm></TicketForm>
 
         <!-- Balance Card -->
         <section class="balance-section">
@@ -370,6 +372,8 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
 import Navbar from '@/layouts/Sucursales/Navbar.vue';
+import TicketForm from '@/components/Forms/Sucursales/TicketForm.vue';
+
 
 
 const ticketForm = ref({
