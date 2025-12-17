@@ -83,7 +83,7 @@ const loadTickets = async () => {
     try {
         // Obtenemos los tickets del servicio
         const responseData = await ticketsService.fetchLatestTickets();
-        console.log("Tickets obtenidos:", responseData);
+        // console.log("Tickets obtenidos:", responseData);
         tickets.value = responseData.tickets;
 
     } catch (error) {

@@ -168,6 +168,8 @@
           </div>
         </section>
 
+        <Rewards></Rewards>
+
         <!-- Tickets History -->
         <TicketsHistory> </TicketsHistory>
 
@@ -299,6 +301,9 @@ import Navbar from '@/layouts/Sucursales/Navbar.vue';
 import TicketForm from '@/components/Forms/Sucursales/TicketForm.vue';
 import BalanceCard from '@/components/Sucursales/BalanceCard.vue';
 import TicketsHistory from '@/components/Sucursales/TicketsHistory.vue';
+import Rewards from '@/components/Sucursales/Rewards.vue';
+
+
 const ticketsTable = ref(null);
 
 
