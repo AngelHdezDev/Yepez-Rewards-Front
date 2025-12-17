@@ -1,9 +1,9 @@
 // src/api/Sucursales/TicketsService.js
 import { axiosClient } from '@/api/axiosClient';
 
-const SALES_URL = '/sucursal/tickets'; 
+const SALES_URL = '/sucursal/tickets';
 
-const ticketsService = { 
+const ticketsService = {
   async registerTicket(saleData) {
     try {
       const response = await axiosClient.post(SALES_URL, saleData);
@@ -14,13 +14,13 @@ const ticketsService = {
         response: error.response,
         data: error.response?.data
       });
-      
+
       const errorResponse = error.response;
-      
+
       // 🛑 ERROR 422 - VALIDACIÓN
       if (errorResponse && errorResponse.status === 422) {
         const validationErrors = errorResponse.data.errors;
-        
+
         if (validationErrors) {
           // Extraer el primer error
           let errorMessage = '';
@@ -34,13 +34,23 @@ const ticketsService = {
           throw new Error(errorMessage || 'Error de validación');
         }
       }
-      
+
       // 🛑 OTROS ERRORES
       if (errorResponse && errorResponse.data?.message) {
         throw new Error(errorResponse.data.message);
       }
-      
+
       throw new Error('Error de conexión con el servidor.');
+    }
+  },
+  async fetchLatestTickets() {
+    try {
+      const response = await axiosClient.get(`${SALES_URL}/get`);
+      return response.data;
+
+    } catch (error) {
+      console.error("Error al cargar el historial de tickets:", error);
+      throw new Error(error.response?.data?.message || 'Fallo de conexión al cargar tickets.');
     }
   },
 };

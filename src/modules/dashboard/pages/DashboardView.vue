@@ -76,42 +76,6 @@
         <!-- Balance Card -->
         <BalanceCard></BalanceCard>
 
-        <!-- <section class="balance-section">
-          <div class="balance-card">
-            <div class="balance-header">
-              <div class="balance-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <path d="M12 6v6l4 2"></path>
-                </svg>
-              </div>
-              <div class="balance-info">
-                <span class="balance-label">Puntos disponibles</span>
-                <div class="balance-amount">
-                  <span class="amount-number">{{ userBalance }}</span>
-                  <span class="amount-text">puntos</span>
-                </div>
-              </div>
-            </div>
-            <div class="balance-actions">
-              <button class="action-button primary" @click="goToCatalog">
-                <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="9" cy="21" r="1"></circle>
-                  <circle cx="20" cy="21" r="1"></circle>
-                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                </svg>
-                Canjear puntos
-              </button>
-              <button class="action-button secondary" @click="viewTransactions">
-                <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="12" y1="1" x2="12" y2="23"></line>
-                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                </svg>
-                Ver transacciones
-              </button>
-            </div>
-          </div>
-        </section> -->
 
         <!-- Stats Grid -->
         <section class="stats-grid">
@@ -204,35 +168,8 @@
           </div>
         </section>
 
-
-        <section class="tickets-history">
-          <h3 class="section-title" style="margin-top:1.5rem;">Últimos tickets registrados</h3>
-          <table v-if="tickets.length > 0">
-            <thead>
-              <tr>
-                <th>Número</th>
-                <th>Fecha</th>
-                <th>Monto</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="ticket in tickets.slice(0, 5)" :key="ticket.id">
-                <td>{{ ticket.numero }}</td>
-                <td>{{ ticket.fecha }}</td>
-                <td>${{ ticket.monto }}</td>
-              </tr>
-            </tbody>
-          </table>
-          <div v-else class="empty-state">
-            <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="8" x2="12" y2="12"></line>
-              <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
-            <p>No tienes tickets registrados</p>
-          </div>
-        </section>
-
+        <!-- Tickets History -->
+        <TicketsHistory> </TicketsHistory>
 
         <!-- Recent Transactions -->
         <section class="transactions-section">
@@ -361,12 +298,8 @@ import { useAuthStore } from '@/stores/authStore';
 import Navbar from '@/layouts/Sucursales/Navbar.vue';
 import TicketForm from '@/components/Forms/Sucursales/TicketForm.vue';
 import BalanceCard from '@/components/Sucursales/BalanceCard.vue';
-
-
-const tickets = ref([]); // Aquí guardas los tickets registrados
-
-
-
+import TicketsHistory from '@/components/Sucursales/TicketsHistory.vue';
+const ticketsTable = ref(null);
 
 
 const router = useRouter();
