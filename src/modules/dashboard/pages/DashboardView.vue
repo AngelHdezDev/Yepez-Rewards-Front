@@ -118,7 +118,7 @@
         </section>
 
         <!-- Featured Rewards -->
-        <section class="rewards-section">
+        <!-- <section class="rewards-section">
           <div class="section-header">
             <h2 class="section-title">Recompensas destacadas</h2>
             <button class="view-all-button" @click="goToCatalog">
@@ -166,7 +166,7 @@
               </div>
             </div>
           </div>
-        </section>
+        </section> -->
 
         <Rewards></Rewards>
 
