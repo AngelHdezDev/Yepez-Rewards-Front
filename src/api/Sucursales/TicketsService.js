@@ -45,7 +45,7 @@ const ticketsService = {
   },
   async fetchLatestTickets() {
     try {
-      const response = await axiosClient.get(`${SALES_URL}/get`);
+      const response = await axiosClient.get(`${SALES_URL}/lastTickets`);
       return response.data;
 
     } catch (error) {

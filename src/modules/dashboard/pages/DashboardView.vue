@@ -174,54 +174,8 @@
         <TicketsHistory> </TicketsHistory>
 
         <!-- Recent Transactions -->
-        <section class="transactions-section">
-          <div class="section-header">
-            <h2 class="section-title">Transacciones recientes</h2>
-            <button class="view-all-button" @click="viewTransactions">
-              Ver todas
-              <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-                <polyline points="12 5 19 12 12 19"></polyline>
-              </svg>
-            </button>
-          </div>
+        <RecentTransactions></RecentTransactions>
 
-          <div v-if="isLoadingTransactions" class="transactions-loading">
-            <div class="spinner-large"></div>
-            <p>Cargando transacciones...</p>
-          </div>
-
-          <div v-else-if="recentTransactions.length === 0" class="empty-state">
-            <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="8" x2="12" y2="12"></line>
-              <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
-            <p>No tienes transacciones recientes</p>
-          </div>
-
-          <div v-else class="transactions-list">
-            <div v-for="transaction in recentTransactions" :key="transaction.id" class="transaction-item">
-              <div class="transaction-icon" :class="transaction.type">
-                <svg v-if="transaction.type === 'add'" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                  stroke-width="2">
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-                <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-              </div>
-              <div class="transaction-details">
-                <span class="transaction-description">{{ transaction.description }}</span>
-                <span class="transaction-date">{{ formatDate(transaction.created_at) }}</span>
-              </div>
-              <div class="transaction-amount" :class="transaction.type">
-                {{ transaction.type === 'add' ? '+' : '-' }}{{ formatPoints(transaction.points) }}
-              </div>
-            </div>
-          </div>
-        </section>
       </div>
     </main>
 
@@ -302,6 +256,7 @@ import TicketForm from '@/components/Forms/Sucursales/TicketForm.vue';
 import BalanceCard from '@/components/Sucursales/BalanceCard.vue';
 import TicketsHistory from '@/components/Sucursales/TicketsHistory.vue';
 import Rewards from '@/components/Sucursales/Rewards.vue';
+import RecentTransactions from '@/components/Sucursales/RecentTransactions.vue';
 
 
 const ticketsTable = ref(null);

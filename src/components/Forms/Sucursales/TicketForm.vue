@@ -1,12 +1,12 @@
 <template>
     <section class="register-ticket-section">
-        <h2 class="section-title">Registrar nuevo ticket</h2>
+        <h2 class="section-title">Registrar nueva factura</h2>
         <form @submit.prevent="registerTicket" class="ticket-form">
-            <input type="text" placeholder="Número de ticket" v-model="ticketForm.numero" required />
+            <input type="text" placeholder="Número de factura" v-model="ticketForm.numero" required />
             <input type="date" placeholder="Fecha" v-model="ticketForm.fecha" required />
             <input type="number" placeholder="Monto total" v-model="ticketForm.monto" required min="0" />
             <button type="submit" class="action-button primary" :disabled="isRegisteringTicket">
-                <span v-if="!isRegisteringTicket">Registrar ticket</span>
+                <span v-if="!isRegisteringTicket">Registrar factura</span>
                 <span v-else>Cargando...</span>
             </button>
         </form>
