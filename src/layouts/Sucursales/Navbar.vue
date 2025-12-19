@@ -6,7 +6,8 @@
             </div>
 
             <nav class="nav-menu">
-                <a href="#" class="nav-link active" @click.prevent="currentView = 'dashboard'">
+                <a href="#" class="nav-link" :class="{ active: currentView === 'dashboard' }"
+                    @click.prevent="currentView = 'dashboard'">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="3" width="7" height="7"></rect>
                         <rect x="14" y="3" width="7" height="7"></rect>
@@ -15,7 +16,8 @@
                     </svg>
                     <span>Inicio</span>
                 </a>
-                <a href="#" class="nav-link" @click.prevent="currentView = 'catalog'">
+                <a href="#" class="nav-link" :class="{ active: currentView === 'catalog' }"
+                    @click.prevent="currentView = 'catalog'">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="9" cy="21" r="1"></circle>
                         <circle cx="20" cy="21" r="1"></circle>
@@ -23,7 +25,8 @@
                     </svg>
                     <span>Catálogo</span>
                 </a>
-                <a href="#" class="nav-link" @click.prevent="currentView = 'history'">
+                <a href="#" class="nav-link" :class="{ active: currentView === 'history' }"
+                    @click.prevent="currentView = 'history'">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="10"></circle>
                         <polyline points="12 6 12 12 16 14"></polyline>
@@ -83,6 +86,7 @@ const handleLogout = async () => {
 </script>
 
 <style>
+/* Header */
 /* Header */
 .dashboard-header {
     background: white;
@@ -215,5 +219,77 @@ const handleLogout = async () => {
     width: 1.25rem;
     height: 1.25rem;
     stroke-width: 2;
+}
+
+@media (max-width: 768px) {
+
+    /* 1. Fijar el Header arriba pero sin el menú */
+    .header-content {
+        padding: 0.75rem 1rem;
+        justify-content: space-between;
+        gap: 0;
+    }
+
+    /* Ocultamos detalles de usuario para que no empujen el logo */
+    .user-details {
+        display: none;
+    }
+
+    /* 2. Convertir el NAV en una barra inferior */
+    .nav-menu {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        display: flex;
+        justify-content: space-around;
+        padding: 0.5rem;
+        border-top: 1px solid #e2e8f0;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        z-index: 1000;
+        gap: 0;
+    }
+
+    .nav-link {
+        flex-direction: column;
+        /* Icono arriba, texto abajo */
+        gap: 0.25rem;
+        padding: 0.5rem;
+        font-size: 0.7rem;
+        flex: 1;
+        border-radius: 0;
+        background: transparent !important;
+        /* Quitamos fondos en móvil */
+    }
+
+    .nav-link.active {
+        color: #1e3a8a;
+        /* Color de marca en lugar de fondo azul */
+    }
+
+    .nav-link span {
+        display: block !important;
+        /* Volvemos a mostrar el texto pero pequeño */
+    }
+
+    .nav-icon {
+        width: 1.4rem;
+        height: 1.4rem;
+    }
+
+    /* 3. Ajustes de espaciado para el contenido */
+    body {
+        padding-bottom: 70px;
+        /* Evita que el menú tape el contenido del dashboard */
+    }
+
+    /* Ajuste del botón logout para que sea circular en móvil */
+    .logout-button {
+        background: transparent;
+        width: auto;
+        height: auto;
+    }
+
 }
 </style>
