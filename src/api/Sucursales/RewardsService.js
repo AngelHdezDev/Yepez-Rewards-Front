@@ -14,6 +14,18 @@ const rewardsService = {
             console.error("Error al obtener recompensas:", error);
             throw error;
         }
+    },
+    async fetchAllRewards(page = 1) {
+        try {
+            // Añadimos el parámetro de página a la URL
+            const response = await axiosClient.get(`${REWARDS_URL}/allRewards?page=${page}`);
+
+            // Retornamos TODA la respuesta (que contiene .data y .pagination)
+            return response.data;
+        } catch (error) {
+            console.error("Error al obtener las recompensas:", error);
+            throw error;
+        }
     }
 };
 

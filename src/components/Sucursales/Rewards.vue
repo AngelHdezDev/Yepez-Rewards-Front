@@ -3,7 +3,8 @@
         <div class="section-header">
             <h2 class="section-title">Recompensas destacadas</h2>
             <button class="view-all-button" @click="goToCatalog">
-                <span class="button-text-full">Ver todas</span>
+                <!-- <span class="button-text-full">Ver todas</span> -->
+                <router-link to="/catalogo" class="button-text-full">Ver todas</router-link>
                 <span class="button-text-short">Ver</span>
                 <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="5" y1="12" x2="19" y2="12"></line>
