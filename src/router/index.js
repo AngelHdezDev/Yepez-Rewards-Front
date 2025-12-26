@@ -27,7 +27,13 @@ const routes = [
         path: '/dashboard',
         name: 'Dashboard',
         component: () => import('@/modules/dashboard/pages/DashboardView.vue'),
-        meta: { requiresAuth: true, requiredRole: 'sucursal' } 
+        meta: { requiresAuth: true, requiredRole: 'sucursal' }
+    },
+    {
+        path: '/catalogo',
+        name: 'Catalogo',
+        component: () => import('@/modules/Sucursales/CatalogoView.vue'),
+        meta: { requiresAuth: true, requiredRole: 'sucursal' }
     },
     {
         path: '/dashboard-admin',
@@ -36,13 +42,13 @@ const routes = [
         meta: { requiresAuth: true, requiredRole: 'yepez' }
     },
     // Añade el resto de tus rutas protegidas aquí
-    
+
     // Ruta Raíz: Interceptada por el guard para redirigir según el rol
     {
         path: '/',
         name: 'Home',
-        component: () => import('@/modules/dashboard/pages/DashboardView.vue'), 
-        meta: { requiresAuth: true } 
+        component: () => import('@/modules/dashboard/pages/DashboardView.vue'),
+        meta: { requiresAuth: true }
     },
     // {
     //     path: '/:pathMatch(.*)*',
@@ -65,10 +71,10 @@ router.beforeEach(async (to, from, next) => { // ✅ HACER ASÍNCRONO
         // console.log("Verificando sesión inicial...");
         await authStore.checkAuth(); // Llama y espera la verificación de token/cookie
     }
-    
+
     // Re-leer el estado (ahora ya actualizado por checkAuth)
     const isAuthenticated = authStore.isAuthenticated;
-    const userRole = authStore.userRole; 
+    const userRole = authStore.userRole;
     const requiredRole = to.meta.requiredRole;
 
     // --- LÓGICA DE REDIRECCIÓN DE LA RUTA RAÍZ ('/') ---
@@ -77,7 +83,7 @@ router.beforeEach(async (to, from, next) => { // ✅ HACER ASÍNCRONO
             // console.log("Ruta '/' - No autenticado, redirigiendo a Login.");
             return next({ name: 'Login' });
         }
-        
+
         // Si está logueado, redirigir al dashboard correcto
         if (userRole === 'yepez') {
             // console.log("Ruta '/' - Autenticado como Admin, redirigiendo a DashboardAdmin.");
@@ -90,7 +96,7 @@ router.beforeEach(async (to, from, next) => { // ✅ HACER ASÍNCRONO
         return next({ name: 'Login' });
     }
     // --- FIN DE LÓGICA DE REDIRECCIÓN DE RUTA RAÍZ ---
-    
+
     // 1. Caso: Rutas Protegidas sin Autenticación
     if (to.meta.requiresAuth && !isAuthenticated) {
         // console.warn(`Acceso denegado a ${to.path}. No autenticado.`);
@@ -100,7 +106,7 @@ router.beforeEach(async (to, from, next) => { // ✅ HACER ASÍNCRONO
     // 2. Caso: Rutas Protegidas con Autenticación pero Rol Incorrecto
     if (to.meta.requiresAuth && requiredRole && userRole !== requiredRole) {
         // console.warn(`Acceso denegado a ${to.path}. Rol requerido: ${requiredRole}, Rol de usuario: ${userRole}.`);
-        
+
         // Redirige al dashboard apropiado según el rol del usuario logueado
         if (userRole === 'yepez') {
             return next({ name: 'DashboardAdmin' });

@@ -6,8 +6,7 @@
             </div>
 
             <nav class="nav-menu">
-                <a href="#" class="nav-link" :class="{ active: currentView === 'dashboard' }"
-                    @click.prevent="currentView = 'dashboard'">
+                <router-link to="/dashboard" class="nav-link">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="3" width="7" height="7"></rect>
                         <rect x="14" y="3" width="7" height="7"></rect>
@@ -15,16 +14,15 @@
                         <rect x="3" y="14" width="7" height="7"></rect>
                     </svg>
                     <span>Inicio</span>
-                </a>
-                <a href="#" class="nav-link" :class="{ active: currentView === 'catalog' }"
-                    @click.prevent="currentView = 'catalog'">
+                </router-link>
+                <router-link to="/catalogo" class="nav-link">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="9" cy="21" r="1"></circle>
                         <circle cx="20" cy="21" r="1"></circle>
                         <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                     </svg>
                     <span>Catálogo</span>
-                </a>
+                </router-link>
                 <a href="#" class="nav-link" :class="{ active: currentView === 'history' }"
                     @click.prevent="currentView = 'history'">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -63,6 +61,7 @@
 <script setup>
 import { computed } from 'vue';
 import { useAuthStore } from '@/stores/authStore';
+import { useRouter } from 'vue-router';
 
 const authStore = useAuthStore();
 
