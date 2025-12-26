@@ -53,6 +53,16 @@ const ticketsService = {
       throw new Error(error.response?.data?.message || 'Fallo de conexión al cargar tickets.');
     }
   },
+  async getTotalTickets() {
+    try {
+      const response = await axiosClient.get(`${SALES_URL}/getTotalTicket`);
+      // Retornamos directamente el objeto data que contiene total_facturas
+      return response.data.data;
+    } catch (error) {
+      console.error("Error al obtener el total de tickets:", error);
+      throw error;
+    }
+  },
 };
 
 export default ticketsService;

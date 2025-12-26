@@ -23,14 +23,13 @@
                     </svg>
                     <span>Catálogo</span>
                 </router-link>
-                <a href="#" class="nav-link" :class="{ active: currentView === 'history' }"
-                    @click.prevent="currentView = 'history'">
+                <router-link to="/historial" class="nav-link">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="10"></circle>
                         <polyline points="12 6 12 12 16 14"></polyline>
                     </svg>
                     <span>Historial</span>
-                </a>
+                </router-link>
             </nav>
 
             <div class="user-section">

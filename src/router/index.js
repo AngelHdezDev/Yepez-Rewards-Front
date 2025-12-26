@@ -36,6 +36,12 @@ const routes = [
         meta: { requiresAuth: true, requiredRole: 'sucursal' }
     },
     {
+        path: '/historial',
+        name: 'Historial',
+        component: () => import('@/modules/Sucursales/HistorialView.vue'),
+        meta: { requiresAuth: true, requiredRole: 'sucursal' }
+    },
+    {
         path: '/dashboard-admin',
         name: 'DashboardAdmin',
         component: () => import('@/modules/dashboardAdmin/pages/DashboardAdminView.vue'),
