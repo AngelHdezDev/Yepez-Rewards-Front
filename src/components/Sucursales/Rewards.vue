@@ -3,7 +3,8 @@
         <div class="section-header">
             <h2 class="section-title">Recompensas destacadas</h2>
             <button class="view-all-button" @click="goToCatalog">
-                Ver todas
+                <span class="button-text-full">Ver todas</span>
+                <span class="button-text-short">Ver</span>
                 <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                     <polyline points="12 5 19 12 12 19"></polyline>
@@ -52,7 +53,8 @@
                             </template>
 
                             <template v-else-if="balance < reward.cost_points">
-                                Puntos insuficientes
+                                <span class="button-text-full">Puntos insuficientes</span>
+                                <span class="button-text-short">Sin puntos</span>
                             </template>
 
                             <template v-else>
@@ -246,6 +248,7 @@ onMounted(fetchRewards);
     align-items: center;
     justify-content: space-between;
     margin-bottom: 1.5rem;
+    gap: 1rem;
 }
 
 .section-title {
@@ -268,6 +271,8 @@ onMounted(fetchRewards);
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
     transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .view-all-button:hover {
@@ -279,10 +284,15 @@ onMounted(fetchRewards);
     height: 1rem;
     stroke-width: 2.5;
     transition: transform 0.2s;
+    flex-shrink: 0;
 }
 
 .view-all-button:hover .arrow-icon {
     transform: translateX(4px);
+}
+
+.button-text-short {
+    display: none;
 }
 
 .rewards-loading,
@@ -377,6 +387,7 @@ onMounted(fetchRewards);
     font-weight: 700;
     color: #1e293b;
     margin: 0;
+    line-height: 1.3;
 }
 
 .reward-description {
@@ -384,6 +395,10 @@ onMounted(fetchRewards);
     color: #64748b;
     line-height: 1.5;
     margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .reward-footer {
@@ -393,6 +408,7 @@ onMounted(fetchRewards);
     margin-top: 0.5rem;
     padding-top: 1rem;
     border-top: 1px solid #e2e8f0;
+    gap: 0.75rem;
 }
 
 .reward-points {
@@ -402,6 +418,7 @@ onMounted(fetchRewards);
     font-size: 1.125rem;
     font-weight: 700;
     color: #1e3a8a;
+    flex-shrink: 0;
 }
 
 .points-icon {
@@ -421,11 +438,17 @@ onMounted(fetchRewards);
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .redeem-button:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(30, 58, 138, 0.4);
+}
+
+.redeem-button:active:not(:disabled) {
+    transform: translateY(0);
 }
 
 .redeem-button:disabled {
@@ -514,6 +537,7 @@ onMounted(fetchRewards);
     font-weight: 700;
     color: #1e293b;
     margin: 0;
+    line-height: 1.3;
 }
 
 .modal-description {
@@ -531,6 +555,8 @@ onMounted(fetchRewards);
     padding: 1rem;
     background: #f8fafc;
     border-radius: 0.75rem;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
 
 .points-label,
@@ -599,6 +625,10 @@ onMounted(fetchRewards);
     box-shadow: 0 8px 20px rgba(30, 58, 138, 0.4);
 }
 
+.modal-button.primary:active:not(:disabled) {
+    transform: translateY(0);
+}
+
 .modal-button.secondary {
     background: white;
     color: #64748b;
@@ -663,5 +693,249 @@ onMounted(fetchRewards);
 .error-fade-leave-to {
     opacity: 0;
     transform: translateY(-10px);
+}
+
+/* Responsive Styles */
+
+/* Tablet - 768px */
+@media (max-width: 768px) {
+    .rewards-section {
+        padding: 1.5rem;
+        border-radius: 0.875rem;
+    }
+
+    .section-title {
+        font-size: 1.375rem;
+    }
+
+    .rewards-grid {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 1.25rem;
+    }
+
+    .reward-image {
+        height: 160px;
+    }
+
+    .modal-body {
+        padding: 1.75rem;
+        gap: 1.25rem;
+    }
+
+    .modal-image {
+        height: 220px;
+    }
+
+    .modal-title {
+        font-size: 1.375rem;
+    }
+}
+
+/* Móvil - 640px */
+@media (max-width: 640px) {
+    .rewards-section {
+        padding: 1.25rem;
+    }
+
+    .section-header {
+        margin-bottom: 1.25rem;
+        gap: 0.75rem;
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+    }
+
+    .view-all-button {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+    }
+
+    .rewards-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .reward-card:hover {
+        transform: translateY(-2px);
+    }
+
+    .reward-image {
+        height: 200px;
+    }
+
+    .reward-content {
+        padding: 1rem;
+    }
+
+    .reward-name {
+        font-size: 1rem;
+    }
+
+    .reward-description {
+        font-size: 0.8125rem;
+    }
+
+    .reward-points {
+        font-size: 1rem;
+    }
+
+    .redeem-button {
+        padding: 0.625rem 1rem;
+        font-size: 0.8125rem;
+    }
+
+    /* Modal responsive */
+    .modal-overlay {
+        padding: 0.5rem;
+        align-items: flex-end;
+    }
+
+    .modal-content {
+        max-height: 95vh;
+        border-radius: 1.25rem 1.25rem 0 0;
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+    }
+
+    .modal-image {
+        height: 200px;
+        border-radius: 0.75rem;
+    }
+
+    .modal-title {
+        font-size: 1.25rem;
+    }
+
+    .modal-description {
+        font-size: 0.875rem;
+    }
+
+    .modal-points,
+    .modal-balance {
+        padding: 0.875rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .points-label,
+    .balance-label {
+        font-size: 0.875rem;
+    }
+
+    .points-value,
+    .balance-value {
+        font-size: 1.125rem;
+    }
+
+    .modal-actions {
+        gap: 0.75rem;
+    }
+
+    .modal-button {
+        padding: 0.75rem 1.25rem;
+        font-size: 0.875rem;
+    }
+}
+
+/* Móvil pequeño - 480px */
+@media (max-width: 480px) {
+    .rewards-section {
+        padding: 1rem;
+    }
+
+    .section-title {
+        font-size: 1.125rem;
+    }
+
+    .view-all-button {
+        padding: 0.5rem;
+    }
+
+    .button-text-full {
+        display: none;
+    }
+
+    .button-text-short {
+        display: inline;
+    }
+
+    .reward-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .reward-points {
+        width: 100%;
+    }
+
+    .redeem-button {
+        width: 100%;
+        padding: 0.75rem;
+    }
+
+    .stock-badge {
+        font-size: 0.6875rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .modal-close {
+        width: 2.25rem;
+        height: 2.25rem;
+        top: 0.75rem;
+        right: 0.75rem;
+    }
+
+    .modal-body {
+        padding: 1.25rem;
+        gap: 1rem;
+    }
+
+    .modal-image {
+        height: 180px;
+    }
+
+    .modal-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-button.secondary {
+        order: 2;
+    }
+
+    .modal-button.primary {
+        order: 1;
+    }
+}
+
+/* Móvil muy pequeño - 360px */
+@media (max-width: 360px) {
+    .rewards-section {
+        padding: 0.875rem;
+    }
+
+    .section-header {
+        margin-bottom: 1rem;
+    }
+
+    .reward-content {
+        padding: 0.875rem;
+    }
+
+    .reward-name {
+        font-size: 0.9375rem;
+    }
+
+    .modal-body {
+        padding: 1rem;
+    }
+
+    .modal-title {
+        font-size: 1.125rem;
+    }
 }
 </style>

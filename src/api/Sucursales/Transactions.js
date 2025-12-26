@@ -11,6 +11,26 @@ const transactionService = {
             console.error("Error al obtener transacciones:", error);
             throw error;
         }
+    },
+
+    async fetchTransactionCount() {
+        try {
+            const response = await axiosClient.get('/sucursal/transactions/countTransactions');
+            return response.data;
+        } catch (error) {
+            console.error("Error al obtener el conteo:", error);
+            throw error;
+        }
+    },
+
+    async fetchCanjesCount() {
+        try {
+            const response = await axiosClient.get('/sucursal/transactions/countCanjes');
+            return response.data;
+        } catch (error) {
+            console.error("Error al obtener el conteo:", error);
+            throw error;
+        }
     }
 };
 

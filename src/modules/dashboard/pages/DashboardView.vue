@@ -76,98 +76,10 @@
         <!-- Balance Card -->
         <BalanceCard></BalanceCard>
 
-
         <!-- Stats Grid -->
-        <section class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-icon blue">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-              </svg>
-            </div>
-            <div class="stat-content">
-              <span class="stat-value">{{ transactions.length }}</span>
-              <span class="stat-label">Transacciones</span>
-            </div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-icon green">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-            </div>
-            <div class="stat-content">
-              <span class="stat-value">{{ redemptions.length }}</span>
-              <span class="stat-label">Canjes realizados</span>
-            </div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-icon orange">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="8" r="7"></circle>
-                <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
-              </svg>
-            </div>
-            <div class="stat-content">
-              <span class="stat-value">{{ availableRewards }}</span>
-              <span class="stat-label">Recompensas disponibles</span>
-            </div>
-          </div>
-        </section>
+        <StatsGrid></StatsGrid>
 
         <!-- Featured Rewards -->
-        <!-- <section class="rewards-section">
-          <div class="section-header">
-            <h2 class="section-title">Recompensas destacadas</h2>
-            <button class="view-all-button" @click="goToCatalog">
-              Ver todas
-              <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-                <polyline points="12 5 19 12 12 19"></polyline>
-              </svg>
-            </button>
-          </div>
-
-          <div v-if="isLoadingRewards" class="rewards-loading">
-            <div class="spinner-large"></div>
-            <p>Cargando recompensas...</p>
-          </div>
-
-          <div v-else class="rewards-grid">
-            <div v-for="reward in featuredRewards" :key="reward.id" class="reward-card">
-              <div class="reward-image">
-                <img :src="reward.image || '/placeholder-reward.jpg'" :alt="reward.name">
-                <div v-if="reward.stock < 5 && reward.stock > 0" class="stock-badge low">
-                  ¡Últimas unidades!
-                </div>
-                <div v-else-if="reward.stock === 0" class="stock-badge out">
-                  Agotado
-                </div>
-              </div>
-              <div class="reward-content">
-                <h3 class="reward-name">{{ reward.name }}</h3>
-                <p class="reward-description">{{ reward.description }}</p>
-                <div class="reward-footer">
-                  <div class="reward-points">
-                    <svg class="points-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <polygon
-                        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
-                      </polygon>
-                    </svg>
-                    <span>{{ formatPoints(reward.points_required) }}</span>
-                  </div>
-                  <button class="redeem-button" :disabled="reward.stock === 0 || balance < reward.points_required"
-                    @click="openRedeemModal(reward)">
-                    {{ reward.stock === 0 ? 'Agotado' : balance < reward.points_required ? 'Puntos insuficientes'
-                      : 'Canjear' }} </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section> -->
-
         <Rewards></Rewards>
 
         <!-- Tickets History -->
@@ -257,6 +169,7 @@ import BalanceCard from '@/components/Sucursales/BalanceCard.vue';
 import TicketsHistory from '@/components/Sucursales/TicketsHistory.vue';
 import Rewards from '@/components/Sucursales/Rewards.vue';
 import RecentTransactions from '@/components/Sucursales/RecentTransactions.vue';
+import StatsGrid from '@/components/Sucursales/StatsGrid.vue';
 
 
 const ticketsTable = ref(null);
@@ -344,41 +257,41 @@ const fetchBalance = async () => {
   }
 };
 
-const fetchTransactions = async () => {
-  isLoadingTransactions.value = true;
-  try {
-    // const response = await axios.get('/api/transactions');
-    // transactions.value = response.data;
+// const fetchTransactions = async () => {
+//   isLoadingTransactions.value = true;
+//   try {
+//     // const response = await axios.get('/api/transactions');
+//     // transactions.value = response.data;
 
-    // Datos de ejemplo
-    transactions.value = [
-      { id: 1, type: 'add', description: 'Compra de batería 12V', points: 500, created_at: '2024-11-05' },
-      { id: 2, type: 'subtract', description: 'Canje: Tarjeta de regalo $500', points: 1000, created_at: '2024-11-04' },
-      { id: 3, type: 'add', description: 'Compra de batería 24V', points: 800, created_at: '2024-11-03' },
-      { id: 4, type: 'add', description: 'Bonificación especial', points: 200, created_at: '2024-11-02' },
-      { id: 5, type: 'subtract', description: 'Canje: Descuento $100', points: 300, created_at: '2024-11-01' }
-    ];
-  } catch (error) {
-    console.error('Error al obtener transacciones:', error);
-  } finally {
-    isLoadingTransactions.value = false;
-  }
-};
+//     // Datos de ejemplo
+//     transactions.value = [
+//       { id: 1, type: 'add', description: 'Compra de batería 12V', points: 500, created_at: '2024-11-05' },
+//       { id: 2, type: 'subtract', description: 'Canje: Tarjeta de regalo $500', points: 1000, created_at: '2024-11-04' },
+//       { id: 3, type: 'add', description: 'Compra de batería 24V', points: 800, created_at: '2024-11-03' },
+//       { id: 4, type: 'add', description: 'Bonificación especial', points: 200, created_at: '2024-11-02' },
+//       { id: 5, type: 'subtract', description: 'Canje: Descuento $100', points: 300, created_at: '2024-11-01' }
+//     ];
+//   } catch (error) {
+//     console.error('Error al obtener transacciones:', error);
+//   } finally {
+//     isLoadingTransactions.value = false;
+//   }
+// };
 
-const fetchRedemptions = async () => {
-  try {
-    // const response = await axios.get('/api/redemptions');
-    // redemptions.value = response.data;
+// const fetchRedemptions = async () => {
+//   try {
+//     // const response = await axios.get('/api/redemptions');
+//     // redemptions.value = response.data;
 
-    // Datos de ejemplo
-    redemptions.value = [
-      { id: 1, reward_name: 'Tarjeta de regalo $500', status: 'completed' },
-      { id: 2, reward_name: 'Descuento $100', status: 'completed' }
-    ];
-  } catch (error) {
-    console.error('Error al obtener canjes:', error);
-  }
-};
+//     // Datos de ejemplo
+//     redemptions.value = [
+//       { id: 1, reward_name: 'Tarjeta de regalo $500', status: 'completed' },
+//       { id: 2, reward_name: 'Descuento $100', status: 'completed' }
+//     ];
+//   } catch (error) {
+//     console.error('Error al obtener canjes:', error);
+//   }
+// };
 
 const fetchRewards = async () => {
   isLoadingRewards.value = true;
@@ -578,204 +491,6 @@ onMounted(async () => {
   font-size: 1.125rem;
   color: #64748b;
   margin: 0;
-}
-
-/* Balance Card */
-.balance-section {
-  animation: slideUp 0.6s ease-out;
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.balance-card {
-  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
-  border-radius: 1.5rem;
-  padding: 2rem;
-  box-shadow: 0 10px 30px rgba(30, 58, 138, 0.3);
-  color: white;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.balance-header {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-}
-
-.balance-icon {
-  width: 4rem;
-  height: 4rem;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.balance-icon svg {
-  width: 2rem;
-  height: 2rem;
-  stroke-width: 2;
-}
-
-.balance-info {
-  flex: 1;
-}
-
-.balance-label {
-  font-size: 0.875rem;
-  opacity: 0.9;
-  display: block;
-  margin-bottom: 0.5rem;
-}
-
-.balance-amount {
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-}
-
-.amount-number {
-  font-size: 2.5rem;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.amount-text {
-  font-size: 1.125rem;
-  opacity: 0.9;
-}
-
-.balance-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-
-.action-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.875rem 1.5rem;
-  border: none;
-  border-radius: 0.75rem;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.action-button.primary {
-  background: white;
-  color: #1e3a8a;
-}
-
-.action-button.primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(255, 255, 255, 0.3);
-}
-
-.action-button.secondary {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-.action-button.secondary:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
-}
-
-.button-icon {
-  width: 1.25rem;
-  height: 1.25rem;
-  stroke-width: 2;
-}
-
-/* Stats Grid */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-}
-
-.stat-card {
-  background: white;
-  border-radius: 1rem;
-  padding: 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s;
-}
-
-.stat-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-}
-
-.stat-icon {
-  width: 3.5rem;
-  height: 3.5rem;
-  border-radius: 0.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.stat-icon svg {
-  width: 1.75rem;
-  height: 1.75rem;
-  stroke-width: 2;
-}
-
-.stat-icon.blue {
-  background: #dbeafe;
-  color: #2563eb;
-}
-
-.stat-icon.green {
-  background: #dcfce7;
-  color: #16a34a;
-}
-
-.stat-icon.orange {
-  background: #fed7aa;
-  color: #ea580c;
-}
-
-.stat-content {
-  display: flex;
-  flex-direction: column;
-}
-
-.stat-value {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1e293b;
-  line-height: 1;
-}
-
-.stat-label {
-  font-size: 0.875rem;
-  color: #64748b;
-  margin-top: 0.25rem;
 }
 
 /* Rewards Section */
@@ -981,100 +696,6 @@ onMounted(async () => {
   transform: none;
 }
 
-/* Transactions List */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 3rem;
-  gap: 1rem;
-  color: #64748b;
-}
-
-.empty-icon {
-  width: 3rem;
-  height: 3rem;
-  stroke-width: 2;
-  opacity: 0.5;
-}
-
-.transactions-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.transaction-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem;
-  background: #f8fafc;
-  border-radius: 0.75rem;
-  transition: all 0.2s;
-}
-
-.transaction-item:hover {
-  background: #f1f5f9;
-}
-
-.transaction-icon {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.transaction-icon svg {
-  width: 1.25rem;
-  height: 1.25rem;
-  stroke-width: 2.5;
-}
-
-.transaction-icon.add {
-  background: #dcfce7;
-  color: #16a34a;
-}
-
-.transaction-icon.subtract {
-  background: #fee2e2;
-  color: #dc2626;
-}
-
-.transaction-details {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.transaction-description {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: #1e293b;
-}
-
-.transaction-date {
-  font-size: 0.8125rem;
-  color: #64748b;
-}
-
-.transaction-amount {
-  font-size: 1.125rem;
-  font-weight: 700;
-}
-
-.transaction-amount.add {
-  color: #16a34a;
-}
-
-.transaction-amount.subtract {
-  color: #dc2626;
-}
 
 /* Modal */
 .modal-overlay {

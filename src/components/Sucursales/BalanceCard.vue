@@ -23,14 +23,16 @@
                         <circle cx="20" cy="21" r="1"></circle>
                         <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                     </svg>
-                    Canjear puntos
+                    <span class="button-text">Canjear puntos</span>
+                    <span class="button-text-short">Canjear</span>
                 </button>
                 <button class="action-button secondary" @click="viewTransactions">
                     <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="12" y1="1" x2="12" y2="23"></line>
                         <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
                     </svg>
-                    Ver transacciones
+                    <span class="button-text">Ver transacciones</span>
+                    <span class="button-text-short">Historial</span>
                 </button>
             </div>
         </div>
@@ -119,6 +121,7 @@ const saldoActual = computed(() => {
 
 .balance-info {
     flex: 1;
+    min-width: 0;
 }
 
 .balance-label {
@@ -132,6 +135,7 @@ const saldoActual = computed(() => {
     display: flex;
     align-items: baseline;
     gap: 0.5rem;
+    flex-wrap: wrap;
 }
 
 .amount-number {
@@ -163,6 +167,7 @@ const saldoActual = computed(() => {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
+    white-space: nowrap;
 }
 
 .action-button.primary {
@@ -173,6 +178,10 @@ const saldoActual = computed(() => {
 .action-button.primary:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(255, 255, 255, 0.3);
+}
+
+.action-button.primary:active {
+    transform: translateY(0);
 }
 
 .action-button.secondary {
@@ -186,9 +195,184 @@ const saldoActual = computed(() => {
     transform: translateY(-2px);
 }
 
+.action-button.secondary:active {
+    transform: translateY(0);
+}
+
 .button-icon {
     width: 1.25rem;
     height: 1.25rem;
     stroke-width: 2;
+    flex-shrink: 0;
+}
+
+.button-text-short {
+    display: none;
+}
+
+/* Tablet - 768px */
+@media (max-width: 768px) {
+    .balance-card {
+        padding: 1.5rem;
+        border-radius: 1.25rem;
+    }
+
+    .balance-header {
+        gap: 1.25rem;
+    }
+
+    .balance-icon {
+        width: 3.5rem;
+        height: 3.5rem;
+    }
+
+    .balance-icon svg {
+        width: 1.75rem;
+        height: 1.75rem;
+    }
+
+    .amount-number {
+        font-size: 2.25rem;
+    }
+
+    .amount-text {
+        font-size: 1rem;
+    }
+
+    .action-button {
+        padding: 0.75rem 1.25rem;
+        font-size: 0.875rem;
+    }
+}
+
+/* Móvil - 640px */
+@media (max-width: 640px) {
+    .balance-card {
+        padding: 1.25rem;
+        gap: 1.25rem;
+    }
+
+    .balance-header {
+        gap: 1rem;
+    }
+
+    .balance-icon {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 0.875rem;
+    }
+
+    .balance-icon svg {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+
+    .balance-label {
+        font-size: 0.8125rem;
+        margin-bottom: 0.375rem;
+    }
+
+    .amount-number {
+        font-size: 2rem;
+    }
+
+    .amount-text {
+        font-size: 0.9375rem;
+    }
+
+    .action-button {
+        padding: 0.75rem 1rem;
+        font-size: 0.8125rem;
+        gap: 0.375rem;
+    }
+
+    .button-icon {
+        width: 1.125rem;
+        height: 1.125rem;
+    }
+}
+
+/* Móvil pequeño - 480px */
+@media (max-width: 480px) {
+    .balance-card {
+        padding: 1rem;
+        border-radius: 1rem;
+    }
+
+    .balance-actions {
+        gap: 0.75rem;
+    }
+
+    .action-button {
+        padding: 0.875rem 0.75rem;
+        font-size: 0.75rem;
+    }
+
+    /* Texto corto en móviles pequeños */
+    .button-text {
+        display: none;
+    }
+
+    .button-text-short {
+        display: inline;
+    }
+}
+
+/* Móvil muy pequeño - 360px */
+@media (max-width: 360px) {
+    .balance-card {
+        padding: 0.875rem;
+    }
+
+    .balance-header {
+        gap: 0.875rem;
+    }
+
+    .balance-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+
+    .balance-icon svg {
+        width: 1.25rem;
+        height: 1.25rem;
+    }
+
+    .amount-number {
+        font-size: 1.75rem;
+    }
+
+    .amount-text {
+        font-size: 0.875rem;
+    }
+
+    .action-button {
+        padding: 0.75rem 0.5rem;
+        gap: 0.25rem;
+    }
+
+    .button-icon {
+        width: 1rem;
+        height: 1rem;
+    }
+}
+
+/* Orientación horizontal en móviles */
+@media (max-height: 500px) and (orientation: landscape) {
+    .balance-card {
+        padding: 1rem 1.5rem;
+    }
+
+    .amount-number {
+        font-size: 1.75rem;
+    }
+
+    .balance-actions {
+        gap: 0.75rem;
+    }
+
+    .action-button {
+        padding: 0.625rem 1rem;
+    }
 }
 </style>
