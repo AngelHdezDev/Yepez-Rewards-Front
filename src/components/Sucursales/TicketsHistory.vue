@@ -2,7 +2,13 @@
     <section class="tickets-history">
         <div class="section-header">
             <h3 class="section-title">Últimos 10 tickets registrados</h3>
-            <button class="view-all-btn">Ver todo</button>
+            <button class="view-all-button">
+                <router-link to="/historial" class="button-text-full">Ver todas</router-link>
+                <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </button>
         </div>
 
         <div v-if="loading" class="loading-state">
@@ -105,8 +111,42 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.view-all-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: none;
+    color: #2563eb;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s;
+}
+
+.view-all-button:hover {
+    background: #eff6ff;
+}
+
+.arrow-icon {
+    width: 1rem;
+    height: 1rem;
+    stroke-width: 2.5;
+    transition: transform 0.2s;
+}
+
+.view-all-button:hover .arrow-icon {
+    transform: translateX(4px);
+}
+
 .tickets-history {
     margin-top: 2rem;
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .section-header {

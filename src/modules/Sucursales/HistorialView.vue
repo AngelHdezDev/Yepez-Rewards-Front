@@ -58,6 +58,11 @@
 
                 </div>
 
+                <div v-if="isLoadingTransactions" class="transactions-loading">
+                    <div class="spinner-large"></div>
+                    <p>Cargando facturas...</p>
+                </div>
+
                 <div class="table-container">
                     <table class="data-table">
                         <thead>
@@ -232,7 +237,7 @@ const loadTransactions = async (page = 1) => {
     try {
         const data = await transactionService.getTotalTransacitonsByUser(page);
         transactions.value = data.data.data.transactions || [];
-  paginationInfo2.value = {
+        paginationInfo2.value = {
             current_page: data.data.pagination.current_page,
             last_page: data.data.pagination.last_page,
             per_page: data.data.pagination.per_page
@@ -368,6 +373,32 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.rewards-loading,
+.transactions-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    gap: 1rem;
+    color: #64748b;
+}
+
+.spinner-large {
+    width: 3rem;
+    height: 3rem;
+    border: 3px solid #e2e8f0;
+    border-top-color: #2563eb;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 .pagination-controls {
     display: flex;
     justify-content: center;

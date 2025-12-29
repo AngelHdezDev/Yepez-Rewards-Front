@@ -17,22 +17,21 @@
                 </div>
             </div>
             <div class="balance-actions">
-                <button class="action-button primary" @click="goToCatalog">
+                <button class="action-button primary">
                     <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="9" cy="21" r="1"></circle>
                         <circle cx="20" cy="21" r="1"></circle>
                         <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                     </svg>
-                    <span class="button-text">Canjear puntos</span>
-                    <span class="button-text-short">Canjear</span>
+                    <router-link to="/catalogo" class="button-text">Canjear puntos</router-link>
+          
                 </button>
                 <button class="action-button secondary" @click="viewTransactions">
                     <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="12" y1="1" x2="12" y2="23"></line>
                         <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
                     </svg>
-                    <span class="button-text">Ver transacciones</span>
-                    <span class="button-text-short">Historial</span>
+                    <router-link to="/historial" class="button-text">Ver transacciones</router-link>
                 </button>
             </div>
         </div>

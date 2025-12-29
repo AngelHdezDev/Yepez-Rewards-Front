@@ -2,8 +2,8 @@
     <section class="transactions-section">
         <div class="section-header">
             <h2 class="section-title">Transacciones recientes</h2>
-            <button class="view-all-button" @click="viewTransactions">
-                Ver todas
+            <button class="view-all-button">
+                <router-link to="/historial" class="button-text-full">Ver todas</router-link>
                 <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                     <polyline points="12 5 19 12 12 19"></polyline>
@@ -11,8 +11,8 @@
             </button>
         </div>
 
-        <div v-if="isLoadingTransactions" class="transactions-loading">
-            <div class="spinner-large"></div>
+        <div v-if="isLoadingTransactions" class="loading-state">
+            <div class="spinner"></div>
             <p>Cargando transacciones...</p>
         </div>
 
@@ -55,6 +55,7 @@ import transactionService from '@/api/Sucursales/Transactions';
 
 const transactions = ref([]);
 const isLoadingTransactions = ref(true);
+const loading = ref(true);
 
 // Computed para mostrar solo las últimas 5
 const recentTransactions = computed(() => {
@@ -98,6 +99,32 @@ defineExpose({ loadTransactions });
 </script>
 
 <style scoped>
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #e0e0e0;
+    border-top-color: #3b5998;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 /* Transactions List */
 .empty-state {
     display: flex;
