@@ -55,65 +55,123 @@
                             {{ totalTicketsValue.toLocaleString('es-MX') }} registros
                         </div>
                     </div>
-                    <button class="view-all-link" @click="viewAllTickets">
-                        Ver todas
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="9 18 15 12 9 6"></polyline>
-                        </svg>
-                    </button>
+
                 </div>
 
                 <div class="table-container">
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>Número de ticket</th>
+                                <th>Número de facturasws</th>
                                 <th>Fecha de emisión</th>
                                 <th>Monto</th>
-                                <th>Puntos</th>
+                                <th>Puntos Ganados</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="facturas in displayedTickets" :key="facturas.id">
+                            <tr v-for="ticket in displayedTickets" :key="ticket.id">
                                 <td>
-                                    <span class="ticket-number">{{ totalTicketsValue.toLocaleString('es-MX') }}</span>
+                                    <span class="ticket-number">{{ ticket.ticket_number }}</span>
                                 </td>
-                                <td>{{ formatDate(facturas.issue_date) }}</td>
+                                <td>{{ formatDate(ticket.issue_date) }}</td>
                                 <td>
-                                    <span class="points-value positive">{{ formatPoints(facturas.points_earned) }}
-                                        pts</span>
+                                    ${{ formatCurrency(ticket.amount) }}
                                 </td>
                                 <td>
-                                    <span class="points-value positive">{{ formatPoints(facturas.points_earned) }}
-                                        pts</span>
+                                    <span class="points-value positive">
+                                        +{{ formatPoints(ticket.points_earned) }} pts
+                                    </span>
                                 </td>
-                                <td>${{ formatCurrency(facturas.amount) }}</td>
                             </tr>
                         </tbody>
+
                     </table>
+                    <div class="pagination-controls" v-if="paginationInfo && paginationInfo.current_page">
+                        <button :disabled="paginationInfo.current_page === 1"
+                            @click="loadHistoryData(paginationInfo.current_page - 1)">
+                            Anterior
+                        </button>
+
+                        <span>
+                            Página {{ paginationInfo.current_page }} de {{ paginationInfo.last_page }}
+                        </span>
+
+                        <button :disabled="paginationInfo.current_page === paginationInfo.last_page"
+                            @click="loadHistoryData(paginationInfo.current_page + 1)">
+                            Siguiente
+                        </button>
+                    </div>
+
                 </div>
 
-                <div v-if="facturas.length > displayLimit" class="table-footer">
-                    <span class="footer-text">{{ displayLimit }}</span>
-                    <button class="view-more-button" @click="showMoreTickets">
-                        Ver más
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="9 18 15 12 9 6"></polyline>
-                        </svg>
-                    </button>
-                </div>
             </section>
 
             <!-- Redemptions Section -->
             <section v-if="activeTab === 'todo' || activeTab === 'canjes'" class="history-section">
                 <div class="section-header">
-                    <h2 class="section-title">Historial de Canjes</h2>
-                    <button class="view-all-link" @click="viewAllRedemptions">
-                        Ver más
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="9 18 15 12 9 6"></polyline>
+                    <div class="section-title-wrapper">
+                        <h2 class="section-title">Historial de Transacciones</h2>
+                        <div class="records-badge">
+                            <svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            {{ totalTransactionsValue.toLocaleString('es-MX') }} registros
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <div v-if="isLoadingTransactions" class="transactions-loading">
+                        <div class="spinner-large"></div>
+                        <p>Cargando transacciones...</p>
+                    </div>
+
+                    <div v-else-if="recentTransactions.length === 0" class="empty-state">
+                        <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
                         </svg>
-                    </button>
+                        <p>No tienes transacciones recientes</p>
+                    </div>
+                    <div v-else class="transactions-list">
+                        <div v-for="transaction in transactions" :key="transaction.id" class="transaction-item">
+                            <div class="transaction-icon" :class="transaction.type">
+                                <svg v-if="transaction.type === 'CREDIT'" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                            </div>
+                            <div class="transaction-details">
+                                <span class="transaction-description">{{ transaction.description }}</span>
+                                <span class="transaction-date">{{ formatDate(transaction.created_at) }}</span>
+                            </div>
+                            <div class="transaction-amount" :class="transaction.type">
+                                {{ transaction.type === 'CREDIT' ? '+' : '-' }}{{ formatPoints(transaction.amount) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pagination-controls" v-if="paginationInfo2 && paginationInfo2.current_page">
+                        <button :disabled="paginationInfo2.current_page === 1"
+                            @click="loadTransactions(paginationInfo2.current_page - 1)">
+                            Anterior
+                        </button>
+
+                        <span>
+                            Página {{ paginationInfo2.current_page }} de {{ paginationInfo2.last_page }}
+                        </span>
+
+                        <button :disabled="paginationInfo2.current_page === paginationInfo2.last_page"
+                            @click="loadTransactions(paginationInfo2.current_page + 1)">
+                            Siguiente
+                        </button>
+                    </div>
+
                 </div>
 
                 <div class="redemptions-list">
@@ -143,17 +201,87 @@ import Navbar from '@/layouts/Sucursales/Navbar.vue';
 import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/stores/authStore';
 import ticketService from '@/api/Sucursales/TicketsService';
+import transactionService from '@/api/Sucursales/Transactions';
 
 const totalTicketsValue = ref(0);
+const totalTransactionsValue = ref(0);
 
 const authStore = useAuthStore();
 const { formattedBalance } = storeToRefs(authStore);
 
+const facturasList = ref([]);
+const paginationInfo = ref({
+    current_page: 1,
+    last_page: 1,
+    per_page: 10
+});
+const paginationInfo2 = ref({
+    current_page: 1,
+    last_page: 1,
+    per_page: 10
+});
+const isLoading = ref(false);
+const transactions = ref([]);
+const isLoadingTransactions = ref(true);
+
+const recentTransactions = computed(() => {
+    return Array.isArray(transactions.value) ? transactions.value.slice(0, 5) : [];
+});
+const loadTransactions = async (page = 1) => {
+    isLoadingTransactions.value = true;
+    try {
+        const data = await transactionService.getTotalTransacitonsByUser(page);
+        transactions.value = data.data.data.transactions || [];
+  paginationInfo2.value = {
+            current_page: data.data.pagination.current_page,
+            last_page: data.data.pagination.last_page,
+            per_page: data.data.pagination.per_page
+        };
+    } catch (error) {
+        console.error("Error al cargar transacciones:", error);
+    } finally {
+        isLoadingTransactions.value = false;
+    }
+};
+
+const loadHistoryData = async (page = 1) => {
+    isLoading.value = true;
+    try {
+        const responseData = await ticketService.getAllTicketsByUser(page);
+
+        facturasList.value = responseData.data.tickets || [];
+
+
+        paginationInfo.value = {
+            current_page: responseData.pagination.current_page,
+            last_page: responseData.pagination.last_page,
+            per_page: responseData.pagination.per_page
+        };
+    } catch (error) {
+        console.error("Error al cargar historial:", error);
+    } finally {
+        isLoading.value = false;
+    }
+};
+// Ajustamos tu computed existente para que use la nueva lista reactiva
+const displayedTickets = computed(() => {
+    return facturasList.value; // Aquí puedes mantener tu .slice() si quieres limitar la vista
+});
+
 const loadTotalTickets = async () => {
     try {
         const data = await ticketService.getTotalTickets();
-        // Según tu Postman, el valor está en la propiedad 'total_facturas'
+
         totalTicketsValue.value = data.total_facturas || 0;
+    } catch (error) {
+        console.error("Error al cargar el total de tickets:", error);
+    }
+};
+
+const loadTotalTransactions = async () => {
+    try {
+        const data = await transactionService.getTotalTransaccionesCount();
+        totalTransactionsValue.value = data.canje_count || 0;
     } catch (error) {
         console.error("Error al cargar el total de tickets:", error);
     }
@@ -181,10 +309,6 @@ const activeTab = ref('todo');
 const displayLimit = ref(10);
 
 // Computed
-const displayedTickets = computed(() => {
-    return props.facturas.slice(0, displayLimit.value);
-});
-
 const displayedRedemptions = computed(() => {
     return props.redemptions.slice(0, 4);
 });
@@ -237,10 +361,68 @@ const viewAllRedemptions = () => {
 
 onMounted(() => {
     loadTotalTickets();
+    loadTotalTransactions();
+    loadHistoryData(1);
+    loadTransactions(1);
 });
 </script>
 
 <style scoped>
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 3rem;
+    padding: 1.5rem 0;
+    border-top: 1px solid #e5e7eb;
+    /* Línea sutil superior */
+}
+
+.pagination-controls button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+    background-color: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Efecto Hover para botones activos */
+.pagination-controls button:not(:disabled):hover {
+    background-color: #f9fafb;
+    border-color: #3b82f6;
+    /* Azul primario acorde a tu app */
+    color: #3b82f6;
+    transform: translateY(-1px);
+}
+
+/* Estado Desactivado (Disabled) */
+.pagination-controls button:disabled {
+    background-color: #f3f4f6;
+    color: #9ca3af;
+    border-color: #e5e7eb;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Estilo del texto "Página X de Y" */
+.pagination-controls span {
+    font-size: 0.875rem;
+    color: #6b7280;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    background-color: #f3f4f6;
+    border-radius: 2rem;
+}
+
 .history-view {
     max-width: 1400px;
     margin: 0 auto;
@@ -594,6 +776,153 @@ onMounted(() => {
 
 .redemption-points.negative {
     color: #dc2626;
+}
+
+/* Transactions List */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    gap: 1rem;
+    color: #64748b;
+}
+
+.empty-icon {
+    width: 3rem;
+    height: 3rem;
+    stroke-width: 2;
+    opacity: 0.5;
+}
+
+.transactions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.transaction-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 0.75rem;
+    transition: all 0.2s;
+}
+
+.transaction-item:hover {
+    background: #f1f5f9;
+}
+
+.transaction-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.transaction-icon svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    stroke-width: 2.5;
+}
+
+.transaction-icon.CREDIT {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.transaction-icon.DEBIT {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.transaction-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.transaction-description {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.transaction-date {
+    font-size: 0.8125rem;
+    color: #64748b;
+}
+
+.transaction-amount {
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
+.transaction-amount.CREDIT {
+    color: #16a34a;
+}
+
+.transaction-amount.DEBIT {
+    color: #dc2626;
+}
+
+.view-all-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: none;
+    color: #2563eb;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s;
+}
+
+.view-all-button:hover {
+    background: #eff6ff;
+}
+
+.arrow-icon {
+    width: 1rem;
+    height: 1rem;
+    stroke-width: 2.5;
+    transition: transform 0.2s;
+}
+
+.view-all-button:hover .arrow-icon {
+    transform: translateX(4px);
+}
+
+.rewards-section,
+.transactions-section {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
 }
 
 /* Responsive */

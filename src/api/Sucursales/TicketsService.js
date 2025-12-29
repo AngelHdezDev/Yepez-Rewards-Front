@@ -63,6 +63,17 @@ const ticketsService = {
       throw error;
     }
   },
+  async getAllTicketsByUser(page = 1) {
+    try {
+      // Concatenamos el parámetro page para el backend
+      const response = await axiosClient.get(`${SALES_URL}/getAllTicketsByUser?page=${page}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error en servicio de tickets:", error);
+      throw error;
+    }
+  }
+
 };
 
 export default ticketsService;

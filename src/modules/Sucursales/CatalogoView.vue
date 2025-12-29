@@ -99,14 +99,14 @@
             </div>
             <div class="pagination-controls">
                 <button :disabled="paginationInfo.current_page === 1"
-                    @click="loadRewards(paginationInfo.current_page - 1)">
+                    @click="fetchRewards(paginationInfo.current_page - 1)">
                     Anterior
                 </button>
 
                 <span>Página {{ paginationInfo.current_page }} de {{ paginationInfo.total_pages }}</span>
 
                 <button :disabled="paginationInfo.current_page === paginationInfo.total_pages"
-                    @click="loadRewards(paginationInfo.current_page + 1)">
+                    @click="fetchRewards(paginationInfo.current_page + 1)">
                     Siguiente
                 </button>
             </div>

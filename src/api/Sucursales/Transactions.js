@@ -31,7 +31,28 @@ const transactionService = {
             console.error("Error al obtener el conteo:", error);
             throw error;
         }
-    }
+    },
+
+    async getTotalTransaccionesCount() {
+        try {
+            const response = await axiosClient.get('/sucursal/transactions/getTotalCanjesByUser');
+            return response.data;
+
+        } catch (error) {
+            console.error("Error al obtener el total de transacciones:", error);
+            throw error;
+        }
+    },
+
+    async getTotalTransacitonsByUser(page = 1) {
+        try {
+            const response = await axiosClient.get(`/sucursal/transactions/getTotalTransacitonsByUser?page=${page}`);
+            return response;
+        } catch (error) {
+            console.error("Error al obtener transacciones:", error);
+            throw error;
+        }
+    },
 };
 
 export default transactionService;
