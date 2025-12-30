@@ -58,12 +58,12 @@
 
                 </div>
 
-                <div v-if="isLoadingTransactions" class="transactions-loading">
+                <div v-if="isLoadingTickets" class="transactions-loading">
                     <div class="spinner-large"></div>
                     <p>Cargando facturas...</p>
                 </div>
 
-                <div class="table-container">
+                <div v-else-if="totalTickets > 0" class="table-container">
                     <table class="data-table">
                         <thead>
                             <tr>
@@ -90,6 +90,8 @@
                             </tr>
                         </tbody>
 
+
+
                     </table>
                     <div class="pagination-controls" v-if="paginationInfo && paginationInfo.current_page">
                         <button :disabled="paginationInfo.current_page === 1"
@@ -108,6 +110,18 @@
                     </div>
 
                 </div>
+                <div v-else class="empty-state">
+                    <div class="empty-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+                            <line x1="7" y1="9" x2="17" y2="9"></line>
+                            <line x1="7" y1="13" x2="13" y2="13"></line>
+                        </svg>
+                    </div>
+                    <p class="empty-text">{{ errorMessage || 'No tienes facturas registrados' }}</p>
+                    <p class="empty-subtext">Las facturas que registres aparecerán aquí</p>
+                </div>
+
 
             </section>
 
@@ -209,6 +223,7 @@ import ticketService from '@/api/Sucursales/TicketsService';
 import transactionService from '@/api/Sucursales/Transactions';
 
 const totalTicketsValue = ref(0);
+const totalTickets = ref(0);
 const totalTransactionsValue = ref(0);
 
 const authStore = useAuthStore();
@@ -228,6 +243,7 @@ const paginationInfo2 = ref({
 const isLoading = ref(false);
 const transactions = ref([]);
 const isLoadingTransactions = ref(true);
+const isLoadingTickets = ref(true);
 
 const recentTransactions = computed(() => {
     return Array.isArray(transactions.value) ? transactions.value.slice(0, 5) : [];
@@ -274,12 +290,18 @@ const displayedTickets = computed(() => {
 });
 
 const loadTotalTickets = async () => {
+    isLoadingTickets.value = true;
     try {
         const data = await ticketService.getTotalTickets();
 
         totalTicketsValue.value = data.total_facturas || 0;
+
+        totalTickets.value = data.total_facturas;
+
     } catch (error) {
         console.error("Error al cargar el total de tickets:", error);
+    } finally {
+        isLoadingTickets.value = false;
     }
 };
 
@@ -1065,6 +1087,90 @@ onMounted(() => {
 
     .redemption-points {
         font-size: 1rem;
+    }
+}
+
+/* --- Añade esto al final de tu <style scoped> --- */
+
+@media (max-width: 768px) {
+
+    /* Mejora la paginación para que no se amontone */
+    .pagination-controls {
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding: 1rem 0;
+    }
+
+    .pagination-controls span {
+        order: -1;
+        /* Pone el texto de página arriba de los botones */
+        width: 100%;
+        text-align: center;
+        background-color: transparent;
+    }
+
+    .pagination-controls button {
+        flex: 1;
+        /* Los botones crecen para ser más fáciles de tocar */
+        justify-content: center;
+    }
+}
+
+@media (max-width: 640px) {
+
+    /* Evita que la tabla rompa el layout si el número de factura es largo */
+    .table-container {
+        margin: 0 -1rem;
+        /* Aprovecha el espacio de los bordes */
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+    }
+
+    /* Ajuste para las listas de transacciones y canjes */
+    .transaction-item,
+    .redemption-item {
+        padding: 0.75rem;
+    }
+
+    .transaction-amount,
+    .redemption-points {
+        font-size: 0.95rem;
+        white-space: nowrap;
+    }
+
+    /* Si los tabs son muchos, permite scroll horizontal en lugar de aplastarlos */
+    .tabs-container {
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .tabs {
+        min-width: max-content;
+        /* Mantiene los botones en una sola línea con scroll */
+    }
+
+    .tab-button {
+        padding: 0.5rem 1rem;
+    }
+
+    /* Ajuste de los títulos de las secciones para ganar espacio */
+    .section-title-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}
+
+/* Ajuste fino para pantallas muy pequeñas (iPhone SE, etc) */
+@media (max-width: 380px) {
+    .summary-value {
+        font-size: 1.25rem;
+    }
+
+    .page-title {
+        font-size: 1.35rem;
     }
 }
 </style>

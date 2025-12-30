@@ -50,23 +50,19 @@
                     <line x1="7" y1="13" x2="13" y2="13"></line>
                 </svg>
             </div>
-            <p class="empty-text">{{ errorMessage || 'No tienes tickets registrados' }}</p>
-            <p class="empty-subtext">Los tickets que registres aparecerán aquí</p>
+            <p class="empty-text">{{ errorMessage || 'No tienes facturas registradas' }}</p>
+            <p class="empty-subtext">Las facturas que registres aparecerán aquí</p>
         </div>
     </section>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import ticketsService from '@/api/Sucursales/TicketsService'; // ✅ Importamos el servicio
+import ticketsService from '@/api/Sucursales/TicketsService'; 
 
 const tickets = ref([]);
 const loading = ref(true);
-const errorMessage = ref(''); // Para mostrar errores de API
-
-// --- Métodos de Ayuda ---
-
-// Asume que la fecha viene en formato ISO (ej. "2025-12-16 10:30:00")
+const errorMessage = ref(''); 
 const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);

@@ -381,13 +381,15 @@ onMounted(() => fetchRewards(1));
 /* Tarjeta de Saldo Glassmorphism */
 .balance-card {
     background: white;
-    padding: 1.25rem 2rem;
+    padding: 1.25rem 1.5rem;
     border-radius: 1.25rem;
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1rem;
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.8);
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .balance-icon {
@@ -601,18 +603,6 @@ onMounted(() => fetchRewards(1));
     background: #f1f5f9;
     color: #94a3b8;
     cursor: not-allowed;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .catalog-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .balance-card {
-        width: 100%;
-    }
 }
 
 /* Rewards Section */
@@ -1076,10 +1066,92 @@ onMounted(() => fetchRewards(1));
     transform: translateY(-10px);
 }
 
-/* Responsive Styles */
+/* ==================== RESPONSIVE STYLES ==================== */
 
-/* Tablet - 768px */
+/* Para pantallas grandes (más de 1200px) */
+@media (min-width: 1200px) {
+    .catalog-page {
+        padding: 3rem;
+    }
+    
+    .rewards-grid-premium {
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    }
+}
+
+/* Tablet - 992px */
+@media (max-width: 992px) {
+    .catalog-page {
+        padding: 2rem;
+    }
+    
+    .main-title {
+        font-size: 2.25rem;
+    }
+    
+    .rewards-grid-premium {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .catalog-header {
+        gap: 1.5rem;
+    }
+}
+
+/* Tablet pequeña - 768px */
 @media (max-width: 768px) {
+    .catalog-page {
+        padding: 1.5rem;
+    }
+    
+    .catalog-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1.5rem;
+    }
+    
+    .main-title {
+        font-size: 2rem;
+    }
+    
+    .balance-card {
+        width: 100%;
+        justify-content: space-between;
+        padding: 1.25rem 1.5rem;
+    }
+    
+    .controls-section {
+        margin-bottom: 2rem;
+    }
+    
+    .filter-pills {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 0.75rem;
+    }
+    
+    .rewards-grid-premium {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.25rem;
+    }
+    
+    .premium-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .pagination-controls {
+        gap: 1rem;
+        padding: 1rem 0;
+        margin-top: 2rem;
+    }
+    
+    .pagination-controls button {
+        padding: 0.5rem 1rem;
+        font-size: 0.8125rem;
+    }
+    
+    /* Rewards Section Tablet */
     .rewards-section {
         padding: 1.5rem;
         border-radius: 0.875rem;
@@ -1112,8 +1184,91 @@ onMounted(() => fetchRewards(1));
     }
 }
 
-/* Móvil - 640px */
+/* Móvil grande - 640px */
 @media (max-width: 640px) {
+    .catalog-page {
+        padding: 1.25rem;
+    }
+    
+    .main-title {
+        font-size: 1.75rem;
+    }
+    
+    .subtitle {
+        font-size: 1rem;
+    }
+    
+    .balance-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1.25rem;
+    }
+    
+    .balance-details .amount {
+        font-size: 1.5rem;
+    }
+    
+    .search-bar {
+        max-width: 100%;
+    }
+    
+    .search-bar input {
+        padding: 0.875rem 0.875rem 0.875rem 3rem;
+        font-size: 0.9375rem;
+    }
+    
+    .rewards-grid-premium {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .premium-card {
+        border-radius: 1.25rem;
+    }
+    
+    .reward-media {
+        height: 200px;
+    }
+    
+    .reward-body {
+        padding: 1.5rem;
+    }
+    
+    .reward-name {
+        font-size: 1.125rem;
+    }
+    
+    .reward-description {
+        font-size: 0.875rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    .action-button {
+        padding: 0.875rem;
+        font-size: 0.9375rem;
+    }
+    
+    .pagination-controls {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+    }
+    
+    .pagination-controls button {
+        padding: 0.5rem 0.875rem;
+        font-size: 0.75rem;
+    }
+    
+    .pagination-controls span {
+        font-size: 0.75rem;
+        padding: 0.375rem 0.75rem;
+        order: -1;
+        width: 100%;
+        text-align: center;
+    }
+    
+    /* Rewards Section Mobile */
     .rewards-section {
         padding: 1.25rem;
     }
@@ -1224,6 +1379,120 @@ onMounted(() => fetchRewards(1));
 
 /* Móvil pequeño - 480px */
 @media (max-width: 480px) {
+    .catalog-page {
+        padding: 1rem;
+    }
+    
+    .catalog-header {
+        margin-bottom: 2rem;
+        gap: 1.25rem;
+    }
+    
+    .main-title {
+        font-size: 1.5rem;
+    }
+    
+    .subtitle {
+        font-size: 0.875rem;
+    }
+    
+    .balance-card {
+        padding: 1rem;
+        border-radius: 1rem;
+    }
+    
+    .balance-icon {
+        padding: 0.625rem;
+    }
+    
+    .balance-icon svg {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+    
+    .balance-details .label {
+        font-size: 0.6875rem;
+    }
+    
+    .balance-details .amount {
+        font-size: 1.375rem;
+    }
+    
+    .controls-section {
+        gap: 1.25rem;
+    }
+    
+    .filter-pills {
+        gap: 0.5rem;
+    }
+    
+    .pill {
+        padding: 0.5rem 1.25rem;
+        font-size: 0.875rem;
+    }
+    
+    .rewards-grid-premium {
+        gap: 0.875rem;
+    }
+    
+    .premium-card {
+        border-radius: 1rem;
+    }
+    
+    .reward-media {
+        height: 180px;
+    }
+    
+    .pts-floating-tag {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.75rem;
+        border-radius: 0.5rem;
+    }
+    
+    .premium-badge {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.6875rem;
+    }
+    
+    .reward-body {
+        padding: 1.25rem;
+    }
+    
+    .reward-name {
+        font-size: 1.0625rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .reward-description {
+        font-size: 0.8125rem;
+        margin-bottom: 1rem;
+        -webkit-line-clamp: 3;
+    }
+    
+    .action-button {
+        padding: 0.75rem;
+        font-size: 0.875rem;
+        border-radius: 0.875rem;
+    }
+    
+    .btn-arrow {
+        width: 1rem;
+        height: 1rem;
+    }
+    
+    .pagination-controls {
+        gap: 0.5rem;
+        margin-top: 1.25rem;
+        padding: 0.875rem 0;
+    }
+    
+    .pagination-controls button {
+        padding: 0.4375rem 0.75rem;
+        font-size: 0.6875rem;
+        border-radius: 0.375rem;
+    }
+    
+    /* Rewards Section Small Mobile */
     .rewards-section {
         padding: 1rem;
     }
@@ -1295,6 +1564,49 @@ onMounted(() => fetchRewards(1));
 
 /* Móvil muy pequeño - 360px */
 @media (max-width: 360px) {
+    .catalog-page {
+        padding: 0.75rem;
+    }
+    
+    .main-title {
+        font-size: 1.375rem;
+    }
+    
+    .balance-card {
+        padding: 0.875rem;
+    }
+    
+    .balance-details .amount {
+        font-size: 1.25rem;
+    }
+    
+    .pill {
+        padding: 0.4375rem 1rem;
+        font-size: 0.8125rem;
+    }
+    
+    .rewards-grid-premium {
+        gap: 0.75rem;
+    }
+    
+    .reward-media {
+        height: 160px;
+    }
+    
+    .reward-body {
+        padding: 1rem;
+    }
+    
+    .pagination-controls button {
+        font-size: 0.625rem;
+        padding: 0.375rem 0.625rem;
+    }
+    
+    .pagination-controls span {
+        font-size: 0.6875rem;
+    }
+    
+    /* Rewards Section Very Small Mobile */
     .rewards-section {
         padding: 0.875rem;
     }
@@ -1317,6 +1629,28 @@ onMounted(() => fetchRewards(1));
 
     .modal-title {
         font-size: 1.125rem;
+    }
+}
+
+/* Para mejorar la accesibilidad en dispositivos táctiles */
+@media (hover: none) and (pointer: coarse) {
+    .premium-card:hover {
+        transform: none;
+    }
+    
+    .reward-card:hover {
+        transform: none;
+    }
+    
+    .action-button:hover,
+    .redeem-button:hover,
+    .modal-button:hover,
+    .view-all-button:hover {
+        transform: none;
+    }
+    
+    .pagination-controls button:not(:disabled):hover {
+        transform: none;
     }
 }
 </style>
