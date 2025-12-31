@@ -27,7 +27,7 @@
             <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
           </svg>
-          <span>Usuarios</span>
+          <span>Sucursales</span>
         </a>
 
         <a href="#" class="nav-item" :class="{ active: currentView === 'rewards' }"
@@ -212,7 +212,7 @@
                     <line x1="20" y1="8" x2="20" y2="14"></line>
                     <line x1="23" y1="11" x2="17" y2="11"></line>
                   </svg>
-                  <span>Agregar Usuario</span>
+                  <span>Agregar Sucursal</span>
                 </button>
                 <button class="quick-action-btn" @click="openModal('addReward')">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -241,7 +241,7 @@
 
         <!-- Users View -->
         <div v-else-if="currentView === 'users'" class="view-container">
-          <div class="view-header">
+          <!-- <div class="view-header">
             <div class="search-box">
               <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="11" cy="11" r="8"></circle>
@@ -310,7 +310,9 @@
                 </tr>
               </tbody>
             </table>
-          </div>
+          </div> -->
+
+          <user-view></user-view>
         </div>
 
         <!-- Rewards View -->
@@ -719,6 +721,7 @@ import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
 import adminService from '@/api/adminService';
 import Swal from 'sweetalert2';
+import UserView from '@/modules/Admin/UserView.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -811,7 +814,7 @@ const pointsForm = ref({
 const pageTitle = computed(() => {
   const titles = {
     overview: 'Panel de Control',
-    users: 'Gestión de Usuarios',
+    users: 'Gestión de Sucursales',
     rewards: 'Gestión de Recompensas',
     redemptions: 'Gestión de Canjes',
     transactions: 'Historial de Transacciones'
