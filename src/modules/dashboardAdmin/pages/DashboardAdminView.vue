@@ -4,8 +4,10 @@
     <aside class="admin-sidebar">
       <div class="sidebar-header">
         <img src="@/assets/logo-yepez.svg" alt="Yépez" class="sidebar-logo" @error="handleImageError" />
+        <img src="@/assets/red.png" alt="Red-Conecta" class="sidebar-logo" @error="handleImageError" />
         <span class="admin-badge">Admin</span>
       </div>
+
 
       <nav class="sidebar-nav">
         <a href="#" class="nav-item" :class="{ active: currentView === 'overview' }"

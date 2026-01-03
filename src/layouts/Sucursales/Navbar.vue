@@ -4,6 +4,9 @@
             <div class="logo-section">
                 <img src="@/assets/logo-yepez.svg" alt="Yépez" class="header-logo" @error="handleImageError" />
             </div>
+            <div class="logo-section">
+                <img src="@/assets/red.png" alt="Red-Conecta    " class="header-logo" @error="handleImageError" />
+            </div>
 
             <nav class="nav-menu">
                 <router-link to="/dashboard" class="nav-link">
