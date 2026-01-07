@@ -445,56 +445,7 @@
 
         <!-- Transactions View -->
         <div v-else-if="currentView === 'transactions'" class="view-container">
-          <div class="view-header">
-            <div class="search-box">
-              <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <path d="m21 21-4.35-4.35"></path>
-              </svg>
-              <input type="text" v-model="searchTransactionsQuery" placeholder="Buscar transacciones..."
-                class="search-input" />
-            </div>
-            <button class="primary-btn" @click="openModal('addPoints')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-              Nueva Transacción
-            </button>
-          </div>
-
-          <div class="table-container">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Usuario</th>
-                  <th>Tipo</th>
-                  <th>Puntos</th>
-                  <th>Descripción</th>
-                  <th>Fecha</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="transaction in filteredTransactions" :key="transaction.id">
-                  <td>#{{ transaction.id }}</td>
-                  <td>{{ transaction.user_name }}</td>
-                  <td>
-                    <span class="type-badge" :class="transaction.type">
-                      {{ transaction.type === 'add' ? 'Crédito' : 'Débito' }}
-                    </span>
-                  </td>
-                  <td>
-                    <span class="points-change" :class="transaction.type">
-                      {{ transaction.type === 'add' ? '+' : '-' }}{{ formatPoints(transaction.points) }}
-                    </span>
-                  </td>
-                  <td>{{ transaction.description }}</td>
-                  <td>{{ formatDate(transaction.created_at) }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <TransactionView></TransactionView>
         </div>
       </div>
     </main>
@@ -724,6 +675,7 @@ import { useAuthStore } from '@/stores/authStore';
 import adminService from '@/api/adminService';
 import Swal from 'sweetalert2';
 import UserView from '@/modules/Admin/UserView.vue';
+import TransactionView from '@/modules/Admin/TransactionView.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -748,12 +700,7 @@ const stats = ref({
   totalPointsDistributed: 125000
 });
 
-const users = ref([
-  { id: 1, name: 'Juan Pérez', email: 'juan@ejemplo.com', balance: 15000, created_at: '2024-10-15' },
-  { id: 2, name: 'María García', email: 'maria@ejemplo.com', balance: 8500, created_at: '2024-10-20' },
-  { id: 3, name: 'Carlos López', email: 'carlos@ejemplo.com', balance: 22000, created_at: '2024-09-10' },
-  { id: 4, name: 'Ana Martínez', email: 'ana@ejemplo.com', balance: 5000, created_at: '2024-11-01' }
-]);
+
 
 const rewards = ref([
   { id: 1, name: 'Tarjeta de regalo $500', description: 'Tarjeta válida en tiendas participantes', points_required: 5000, stock: 10, image: null },
@@ -767,13 +714,6 @@ const redemptions = ref([
   { id: 2, user_name: 'María García', reward_name: 'Kit de herramientas', points: 8000, status: 'pending', created_at: '2024-11-09' },
   { id: 3, user_name: 'Carlos López', reward_name: 'Descuento 20%', points: 2000, status: 'completed', created_at: '2024-11-08' },
   { id: 4, user_name: 'Ana Martínez', reward_name: 'Tarjeta de regalo $500', points: 5000, status: 'completed', created_at: '2024-11-07' }
-]);
-
-const transactions = ref([
-  { id: 1, user_name: 'Juan Pérez', type: 'add', points: 500, description: 'Compra de batería 12V', created_at: '2024-11-10' },
-  { id: 2, user_name: 'María García', type: 'subtract', points: 8000, description: 'Canje: Kit de herramientas', created_at: '2024-11-09' },
-  { id: 3, user_name: 'Carlos López', type: 'add', points: 1000, description: 'Compra de batería 24V', created_at: '2024-11-08' },
-  { id: 4, user_name: 'Ana Martínez', type: 'subtract', points: 5000, description: 'Canje: Tarjeta de regalo', created_at: '2024-11-07' }
 ]);
 
 const recentActivity = ref([

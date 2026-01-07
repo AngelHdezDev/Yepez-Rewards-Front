@@ -17,7 +17,11 @@
     </div>
 
     <div class="table-container">
-        <table class="data-table">
+        <div v-if="isLoading" class="rewards-loading">
+            <div class="spinner-large"></div>
+            <p>Cargando sucursales...</p>
+        </div>
+        <table class="data-table" v-else>
             <thead>
                 <tr>
                     <th>Sucursal</th>
@@ -408,6 +412,32 @@ onMounted(async () => {
 
 
 <style scoped>
+.rewards-loading,
+.transactions-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    gap: 1rem;
+    color: #64748b;
+}
+
+.spinner-large {
+    width: 3rem;
+    height: 3rem;
+    border: 3px solid #e2e8f0;
+    border-top-color: #2563eb;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 .pagination-controls {
     display: flex;
     justify-content: center;
