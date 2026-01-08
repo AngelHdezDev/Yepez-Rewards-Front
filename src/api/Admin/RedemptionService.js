@@ -13,6 +13,16 @@ const redemptionService = {
         } catch (error) {
             throw error.response?.data || new Error('Error fetching redemptions');
         }
+    },
+    async updateStatus(id, status) {
+        try {
+            const response = await axiosClient.patch(`/admin/redemptions/${id}/status`, {
+                status: status
+            });
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || new Error('Error al actualizar el estado');
+        }
     }
 
 };

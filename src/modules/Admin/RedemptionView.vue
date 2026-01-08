@@ -32,7 +32,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="redemption in filteredRedemptions" :key="redemption.id">
+                <tr v-for="redemption in redemptions" :key="redemption.id">
                     <td>{{ redemption.user.name }}</td>
                     <td>{{ redemption.reward_name }}</td>
                     <td>{{ formatPoints(redemption.points_cost) }}</td>
@@ -124,14 +124,39 @@ const processRedemption = async (redemption) => {
         text: `Se confirmará la entrega de: ${redemption.reward_name}`,
         icon: 'question',
         showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
         confirmButtonText: 'Sí, entregar',
         cancelButtonText: 'Cancelar'
     });
 
     if (result.isConfirmed) {
-        // Aquí llamarías a tu servicio de actualización (POST/PUT)
-        Swal.fire('¡Logrado!', 'La recompensa ha sido marcada como entregada.', 'success');
-        await fetchRedemptions(paginationInfo.value.current_page);
+        try {
+            // Mostramos un loader de carga mientras se procesa
+            Swal.showLoading();
+
+            // Llamada al endpoint PATCH
+            await redemptionService.updateStatus(redemption.id, 'completed');
+
+            await Swal.fire({
+                title: '¡Completado!',
+                text: 'La recompensa ha sido marcada como entregada.',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            });
+
+            // Recargamos la página actual para ver los cambios
+            await fetchRedemptions(paginationInfo.value.current_page);
+
+        } catch (error) {
+            console.error("Error al actualizar:", error);
+            Swal.fire(
+                'Error',
+                error.message || 'No se pudo actualizar el estado del canje.',
+                'error'
+            );
+        }
     }
 };
 
