@@ -388,59 +388,7 @@
 
         <!-- Redemptions View -->
         <div v-else-if="currentView === 'redemptions'" class="view-container">
-          <div class="view-header">
-            <div class="filter-tabs">
-              <button class="filter-tab" :class="{ active: redemptionFilter === 'all' }"
-                @click="redemptionFilter = 'all'">
-                Todos
-              </button>
-              <button class="filter-tab" :class="{ active: redemptionFilter === 'pending' }"
-                @click="redemptionFilter = 'pending'">
-                Pendientes
-              </button>
-              <button class="filter-tab" :class="{ active: redemptionFilter === 'completed' }"
-                @click="redemptionFilter = 'completed'">
-                Completados
-              </button>
-            </div>
-          </div>
-
-          <div class="table-container">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Usuario</th>
-                  <th>Recompensa</th>
-                  <th>Puntos</th>
-                  <th>Fecha</th>
-                  <th>Estado</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="redemption in filteredRedemptions" :key="redemption.id">
-                  <td>#{{ redemption.id }}</td>
-                  <td>{{ redemption.user_name }}</td>
-                  <td>{{ redemption.reward_name }}</td>
-                  <td>{{ formatPoints(redemption.points) }}</td>
-                  <td>{{ formatDate(redemption.created_at) }}</td>
-                  <td>
-                    <span class="status-badge" :class="redemption.status">
-                      {{ redemption.status === 'pending' ? 'Pendiente' : 'Completado' }}
-                    </span>
-                  </td>
-                  <td>
-                    <button v-if="redemption.status === 'pending'" class="action-btn primary small"
-                      @click="processRedemption(redemption)">
-                      Marcar como entregado
-                    </button>
-                    <span v-else class="text-muted">—</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <RedemptionView></RedemptionView>
         </div>
 
         <!-- Transactions View -->
@@ -676,6 +624,7 @@ import adminService from '@/api/adminService';
 import Swal from 'sweetalert2';
 import UserView from '@/modules/Admin/UserView.vue';
 import TransactionView from '@/modules/Admin/TransactionView.vue';
+import RedemptionView from '@/modules/Admin/RedemptionView.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -709,12 +658,6 @@ const rewards = ref([
   { id: 4, name: 'Tarjeta de regalo $1000', description: 'Tarjeta de mayor denominación', points_required: 10000, stock: 5, image: null }
 ]);
 
-const redemptions = ref([
-  { id: 1, user_name: 'Juan Pérez', reward_name: 'Tarjeta de regalo $500', points: 5000, status: 'pending', created_at: '2024-11-10' },
-  { id: 2, user_name: 'María García', reward_name: 'Kit de herramientas', points: 8000, status: 'pending', created_at: '2024-11-09' },
-  { id: 3, user_name: 'Carlos López', reward_name: 'Descuento 20%', points: 2000, status: 'completed', created_at: '2024-11-08' },
-  { id: 4, user_name: 'Ana Martínez', reward_name: 'Tarjeta de regalo $500', points: 5000, status: 'completed', created_at: '2024-11-07' }
-]);
 
 const recentActivity = ref([
   { id: 1, type: 'user', text: 'Nuevo usuario registrado: Ana Martínez', time: 'Hace 2 horas' },
@@ -782,22 +725,6 @@ const filteredRewards = computed(() => {
   );
 });
 
-const filteredRedemptions = computed(() => {
-  let filtered = redemptions.value;
-  if (redemptionFilter.value !== 'all') {
-    filtered = filtered.filter(r => r.status === redemptionFilter.value);
-  }
-  return filtered;
-});
-
-const filteredTransactions = computed(() => {
-  if (!searchTransactionsQuery.value) return transactions.value;
-  const query = searchTransactionsQuery.value.toLowerCase();
-  return transactions.value.filter(t =>
-    t.user_name.toLowerCase().includes(query) ||
-    t.description.toLowerCase().includes(query)
-  );
-});
 
 // Methods
 const handleImageError = (e) => {
@@ -808,13 +735,7 @@ const formatPoints = (points) => {
   return new Intl.NumberFormat('es-MX').format(points);
 };
 
-const formatDate = (date) => {
-  return new Date(date).toLocaleDateString('es-MX', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  });
-};
+
 
 const openModal = (type, data = null) => {
   modalType.value = type;
@@ -1015,19 +936,6 @@ const deleteReward = async (reward) => {
     alert('Recompensa eliminada exitosamente');
   } catch (error) {
     alert('Error al eliminar recompensa');
-  }
-};
-
-const processRedemption = async (redemption) => {
-  if (!confirm(`¿Marcar como entregado el canje de ${redemption.reward_name}?`)) return;
-
-  try {
-    // await axios.put(`/api/admin/redemptions/${redemption.id}`, { status: 'completed' });
-    redemption.status = 'completed';
-    stats.value.pendingRedemptions--;
-    alert('Canje marcado como completado');
-  } catch (error) {
-    alert('Error al procesar canje');
   }
 };
 

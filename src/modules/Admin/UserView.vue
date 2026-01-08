@@ -202,14 +202,12 @@ const fetchUsers = async (page = 1) => {
     isLoading.value = true;
     try {
         const response = await sucursalesService.getAllSucursales(page);
-        // Asumiendo que tu backend devuelve { success: true, data: [...] }
         users.value = response.data || [];
         paginationInfo.value = {
             current_page: response.pagination.current_page || 1,
             total_pages: response.pagination.last_page || 1
         };
-        console.log('Usuarios cargados:', response.pagination); // DEBUG
-
+       
     } catch (error) {
         console.error('Error al cargar sucursales:', error);
     } finally {
