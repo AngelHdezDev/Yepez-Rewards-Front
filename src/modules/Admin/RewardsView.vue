@@ -157,7 +157,7 @@
                     <button class="modal-btn secondary" @click="closeModal">Cancelar</button>
                     <button class="modal-btn primary" @click="saveReward" :disabled="isSubmitting">
                         <span v-if="!isSubmitting">{{ modalType === 'addReward' ? 'Crear Recompensa' : 'Guardar Cambios'
-                            }}</span>
+                        }}</span>
                         <span v-else class="loading-text">
                             <svg class="spinner-small" viewBox="0 0 24 24">
                                 <circle class="spinner-circle" cx="12" cy="12" r="10" fill="none" stroke="currentColor"
@@ -244,8 +244,6 @@ const fetchRewards = async (page = 1) => {
         // Si la consola muestra los datos directamente en response.data
         rewards.value = response.data || [];
 
-        console.log('Recompensas procesadas:', rewards.value);
-
         if (response.pagination) {
             paginationInfo.value = {
                 current_page: response.pagination.current_page,
@@ -283,15 +281,23 @@ const openModal = (type, data = null) => {
     modalType.value = type;
     showModal.value = true;
 
-    if (type === 'editUser' && data) {
-        userForm.value = { ...data };
-    } else if (type === 'editReward' && data) {
-        rewardForm.value = { ...data };
-    } else if (type === 'addPoints' && data) {
-        selectedUser.value = data;
-        pointsForm.value.user_id = data.id;
+    if (type === 'editReward' && data) {
+        // Clonamos los datos para no modificar la lista original antes de guardar
+        rewardForm.value = {
+            id: data.id, // Fundamental para la URL de actualización
+            name: data.name,
+            description: data.description,
+            cost_points: data.cost_points,
+            stock: data.stock,
+            code: data.code,
+            image_url: data.image_url
+        };
+
+        if (data.image_url) {
+            imagePreview.value = getImageUrl(data.image_url);
+        }
     } else {
-        selectedUser.value = null;
+        resetForm();
     }
 };
 
@@ -308,41 +314,76 @@ const closeModal = () => {
 const saveReward = async () => {
     isSubmitting.value = true;
     try {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        const formData = new FormData();
+        formData.append('name', rewardForm.value.name);
+        formData.append('description', rewardForm.value.description);
+        formData.append('cost_points', rewardForm.value.cost_points); // Nombre según Postman
+        formData.append('code', rewardForm.value.code);
+        formData.append('stock', rewardForm.value.stock);
+        formData.append('is_active', 1);
 
-        if (modalType.value === 'addReward') {
-            // await axios.post('/api/admin/rewards', rewardForm.value);
-            rewards.value.push({
-                id: rewards.value.length + 1,
-                ...rewardForm.value
-            });
-            alert('Recompensa creada exitosamente');
-        } else {
-            // await axios.put(`/api/admin/rewards/${rewardForm.value.id}`, rewardForm.value);
-            const index = rewards.value.findIndex(r => r.id === rewardForm.value.id);
-            if (index !== -1) {
-                rewards.value[index] = { ...rewardForm.value };
-            }
-            alert('Recompensa actualizada exitosamente');
+        // Si el usuario seleccionó un archivo nuevo
+        if (selectedFile.value) {
+            formData.append('image_url', selectedFile.value); // Campo File en la API
         }
 
+        if (modalType.value === 'addReward') {
+            await rewardService.addReward(formData);
+            Swal.fire('¡Éxito!', 'Recompensa creada', 'success');
+        } else {
+            // SIMULACIÓN DE PUT PARA LARAVEL
+            formData.append('_method', 'PUT');
+            await rewardService.updateReward(rewardForm.value.id, formData);
+            Swal.fire('¡Éxito!', 'Recompensa actualizada', 'success');
+        }
+
+        await fetchRewards();
         closeModal();
     } catch (error) {
-        alert('Error al guardar recompensa');
+        // Extracción de errores corregida para mostrar el mensaje de validación de Laravel
+        const errorMsg = error.response?.data?.message || error.message || 'Error al procesar la solicitud';
+        Swal.fire('Error de Validación', errorMsg, 'error');
     } finally {
         isSubmitting.value = false;
     }
 };
 
 const deleteReward = async (reward) => {
-    if (!confirm(`¿Estás seguro de eliminar la recompensa "${reward.name}"?`)) return;
+    // Confirmación elegante con SweetAlert2
+    const result = await Swal.fire({
+        title: '¿Eliminar recompensa?',
+        text: `La recompensa "${reward.name}" ya no estará disponible para las sucursales.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    });
 
-    try {
-        // await axios.delete(`/api/admin/rewards/${reward.id}`);
-        rewards.value = rewards.value.filter(r => r.id !== reward.id);
-        alert('Recompensa eliminada exitosamente');
-    } catch (error) {
-        alert('Error al eliminar recompensa');
+    if (result.isConfirmed) {
+        try {
+            isLoading.value = true;
+            await rewardService.desactivateReward(reward.id);
+
+            Swal.fire(
+                '¡Eliminada!',
+                'La recompensa ha sido eliminada correctamente.',
+                'success'
+            );
+
+            // Refrescar la lista para que desaparezca o se actualice el estado
+            await fetchRewards(paginationInfo.value.current_page);
+        } catch (error) {
+            console.error("Error al eliminar:", error);
+            Swal.fire(
+                'Error',
+                error.message || 'No se pudo eliminar la recompensa',
+                'error'
+            );
+        } finally {
+            isLoading.value = false;
+        }
     }
 };
 
