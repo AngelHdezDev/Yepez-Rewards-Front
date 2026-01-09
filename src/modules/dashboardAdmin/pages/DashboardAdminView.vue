@@ -319,71 +319,7 @@
 
         <!-- Rewards View -->
         <div v-else-if="currentView === 'rewards'" class="view-container">
-          <div class="view-header">
-            <div class="search-box">
-              <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <path d="m21 21-4.35-4.35"></path>
-              </svg>
-              <input type="text" v-model="searchRewardsQuery" placeholder="Buscar recompensas..."
-                class="search-input" />
-            </div>
-            <button class="primary-btn" @click="openModal('addReward')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-              Nueva Recompensa
-            </button>
-          </div>
-
-          <div class="rewards-grid-admin">
-            <div v-for="reward in filteredRewards" :key="reward.id" class="reward-card-admin">
-              <div class="reward-header-admin">
-                <div class="reward-image-admin">
-                  <img v-if="reward.image" :src="reward.image" :alt="reward.name">
-                  <div v-else class="placeholder-image">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                      <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                      <polyline points="21 15 16 10 5 21"></polyline>
-                    </svg>
-                  </div>
-                </div>
-                <div class="stock-indicator" :class="{ low: reward.stock < 5, out: reward.stock === 0 }">
-                  Stock: {{ reward.stock }}
-                </div>
-              </div>
-              <div class="reward-body-admin">
-                <h4 class="reward-name-admin">{{ reward.name }}</h4>
-                <p class="reward-description-admin">{{ reward.description }}</p>
-                <div class="reward-points-admin">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polygon
-                      points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
-                    </polygon>
-                  </svg>
-                  {{ formatPoints(reward.points_required) }} puntos
-                </div>
-              </div>
-              <div class="reward-actions-admin">
-                <button class="action-btn secondary" @click="openModal('editReward', reward)">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                  </svg>
-                  Editar
-                </button>
-                <button class="action-btn danger" @click="deleteReward(reward)">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="3 6 5 6 21 6"></polyline>
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                  </svg>
-                  Eliminar
-                </button>
-              </div>
-            </div>
-          </div>
+          <RewardsView></RewardsView>
         </div>
 
         <!-- Redemptions View -->
@@ -625,6 +561,7 @@ import Swal from 'sweetalert2';
 import UserView from '@/modules/Admin/UserView.vue';
 import TransactionView from '@/modules/Admin/TransactionView.vue';
 import RedemptionView from '@/modules/Admin/RedemptionView.vue';
+import RewardsView from '@/modules/Admin/RewardsView.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -707,25 +644,6 @@ const pageTitle = computed(() => {
   return titles[currentView.value] || 'Dashboard';
 });
 
-const filteredUsers = computed(() => {
-  if (!searchQuery.value) return users.value;
-  const query = searchQuery.value.toLowerCase();
-  return users.value.filter(user =>
-    user.name.toLowerCase().includes(query) ||
-    user.email.toLowerCase().includes(query)
-  );
-});
-
-const filteredRewards = computed(() => {
-  if (!searchRewardsQuery.value) return rewards.value;
-  const query = searchRewardsQuery.value.toLowerCase();
-  return rewards.value.filter(reward =>
-    reward.name.toLowerCase().includes(query) ||
-    reward.description.toLowerCase().includes(query)
-  );
-});
-
-
 // Methods
 const handleImageError = (e) => {
   e.target.style.display = 'none';
@@ -734,8 +652,6 @@ const handleImageError = (e) => {
 const formatPoints = (points) => {
   return new Intl.NumberFormat('es-MX').format(points);
 };
-
-
 
 const openModal = (type, data = null) => {
   modalType.value = type;
