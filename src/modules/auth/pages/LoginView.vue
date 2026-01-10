@@ -13,12 +13,7 @@
       <div class="login-header">
         <div class="logo-container">
           <!-- Cambia esta ruta por tu logo local -->
-          <img 
-            src="@/assets/logo-yepez.svg"  
-            alt="Yépez" 
-            class="logo"
-            @error="handleImageError"
-          />
+          <img src="@/assets/logo-yepez.svg" alt="Yépez" class="logo" @error="handleImageError" />
         </div>
         <h1 class="title">Portal de Recompensas</h1>
         <div class="subtitle">
@@ -41,15 +36,8 @@
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                 <polyline points="22,6 12,13 2,6"></polyline>
               </svg>
-              <input
-                type="email"
-                id="email"
-                v-model="email"
-                class="form-input"
-                placeholder="tu@email.com"
-                required
-                :disabled="isLoading"
-              />
+              <input type="email" id="email" v-model="email" class="form-input" placeholder="tu@email.com" required
+                :disabled="isLoading" autocomplete="email" />
             </div>
           </div>
 
@@ -61,28 +49,20 @@
                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                 <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
               </svg>
-              <input
-                :type="showPassword ? 'text' : 'password'"
-                id="password"
-                v-model="password"
-                class="form-input with-icon-right"
-                placeholder="••••••••"
-                required
-                :disabled="isLoading"
-              />
-              <button
-                type="button"
-                @click="showPassword = !showPassword"
-                class="toggle-password"
-                :disabled="isLoading"
-                tabindex="-1"
-              >
-                <svg v-if="!showPassword" class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <input :type="showPassword ? 'text' : 'password'" id="password" v-model="password"
+                class="form-input with-icon-right" placeholder="••••••••" required :disabled="isLoading"
+                autocomplete="password" />
+              <button type="button" @click="showPassword = !showPassword" class="toggle-password" :disabled="isLoading"
+                tabindex="-1">
+                <svg v-if="!showPassword" class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2">
                   <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                   <circle cx="12" cy="12" r="3"></circle>
                 </svg>
                 <svg v-else class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                  <path
+                    d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24">
+                  </path>
                   <line x1="1" y1="1" x2="23" y2="23"></line>
                 </svg>
               </button>
@@ -104,24 +84,16 @@
           <!-- Remember me & Forgot password -->
           <div class="form-options">
             <label class="remember-checkbox">
-              <input
-                type="checkbox"
-                v-model="rememberMe"
-                :disabled="isLoading"
-              />
+              <input type="checkbox" v-model="rememberMe" :disabled="isLoading" />
               <span class="checkbox-label">Recordarme</span>
             </label>
-            <a href="#" class="forgot-link" @click.prevent="handleForgotPassword">
+            <!-- <a href="#" class="forgot-link" @click.prevent="handleForgotPassword">
               ¿Olvidaste tu contraseña?
-            </a>
+            </a> -->
           </div>
 
           <!-- Submit button -->
-          <button
-            type="submit"
-            class="submit-button"
-            :disabled="isLoading"
-          >
+          <button type="submit" class="submit-button" :disabled="isLoading">
             <span v-if="!isLoading" class="button-content">
               <span>Iniciar Sesión</span>
               <svg class="button-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -131,7 +103,8 @@
             </span>
             <span v-else class="loading-spinner">
               <svg class="spinner" viewBox="0 0 24 24">
-                <circle class="spinner-circle" cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="3"></circle>
+                <circle class="spinner-circle" cx="12" cy="12" r="10" fill="none" stroke="currentColor"
+                  stroke-width="3"></circle>
               </svg>
               <span>Ingresando...</span>
             </span>
@@ -139,12 +112,12 @@
         </form>
 
         <!-- Register link -->
-        <div class="register-section">
+        <!-- <div class="register-section">
           <p class="register-text">
             ¿No tienes cuenta?
             <a href="#" class="register-link" @click.prevent="handleRegister">Regístrate aquí</a>
           </p>
-        </div>
+        </div> -->
 
         <!-- Divider -->
         <!-- <div class="divider">
@@ -184,7 +157,7 @@
 
     <!-- Footer -->
     <div class="footer">
-      <p>© 2024 Acumuladores Yépez</p>
+      <p>© 2026 Acumuladores Yépez</p>
       <p>Todos los derechos reservados</p>
     </div>
   </div>
@@ -193,7 +166,8 @@
 <script setup>
 import { ref } from 'vue';
 import { useAuthStore } from '@/stores/authStore';
-import { useRouter } from 'vue-router';  
+import { useRouter } from 'vue-router';
+import Swal from 'sweetalert2';
 
 const router = useRouter();
 
@@ -206,9 +180,25 @@ const showPassword = ref(false);
 const rememberMe = ref(false);
 
 const submitLogin = async () => {
+  authStore.loginError = null;
   isLoading.value = true;
-  await authStore.handleLogin(email.value, password.value);
-  isLoading.value = false;
+
+  try {
+    await authStore.handleLogin(email.value, password.value);
+    // Si llega aquí, el login fue exitoso y el router ya lo redirigió
+  } catch (error) {
+    // El catch ahora sí se ejecutará porque el store hizo "throw error"
+    Swal.fire({
+      title: '¡Error!',
+      text: authStore.loginError || 'Credenciales inválidas',
+      icon: 'error',
+      confirmButtonText: 'Entendido',
+      confirmButtonColor: '#3085d6', // Puedes personalizar el color
+    });
+    console.error("Fallo de login:", error);
+  } finally {
+    isLoading.value = false;
+  }
 };
 
 const handleImageError = (e) => {
@@ -269,7 +259,7 @@ const handleFacebookLogin = () => {
   position: absolute;
   inset: 0;
   background: radial-gradient(circle at 30% 20%, rgba(239, 68, 68, 0.15) 0%, transparent 50%),
-              radial-gradient(circle at 70% 80%, rgba(96, 165, 250, 0.15) 0%, transparent 50%);
+    radial-gradient(circle at 70% 80%, rgba(96, 165, 250, 0.15) 0%, transparent 50%);
 }
 
 .decoration-circle {
@@ -298,15 +288,19 @@ const handleFacebookLogin = () => {
 }
 
 @keyframes float {
-  0%, 100% { 
+
+  0%,
+  100% {
     transform: translate(0, 0) scale(1);
     opacity: 0.3;
   }
-  33% { 
+
+  33% {
     transform: translate(30px, -30px) scale(1.1);
     opacity: 0.4;
   }
-  66% { 
+
+  66% {
     transform: translate(-20px, 20px) scale(0.9);
     opacity: 0.35;
   }
@@ -319,8 +313,8 @@ const handleFacebookLogin = () => {
   max-width: 26rem;
   background: white;
   border-radius: 1.5rem;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 
-              0 0 100px rgba(30, 58, 138, 0.2);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3),
+    0 0 100px rgba(30, 58, 138, 0.2);
   overflow: hidden;
   animation: slideIn 0.5s ease-out;
 }
@@ -330,6 +324,7 @@ const handleFacebookLogin = () => {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -686,7 +681,9 @@ const handleFacebookLogin = () => {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Sección de registro */

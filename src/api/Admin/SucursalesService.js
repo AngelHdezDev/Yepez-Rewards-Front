@@ -9,6 +9,14 @@ const sucursalesService = {
         } catch (error) {
             throw error.response?.data || new Error('Error fetching users');
         }
+    },
+    async updateSucursal(id, userData) {
+        try {
+            const response = await axiosClient.put(`admin/users/editSucursal/${id}`, userData);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || new Error('Error updating sucursal');
+        }
     }
 };
 

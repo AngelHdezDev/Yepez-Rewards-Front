@@ -11,25 +11,22 @@ class AuthService {
 
     async login(email, password) {
         try {
-            console.log('🔑 Enviando credenciales...');
-            
+
             const response = await axiosClient.post('/login', {
                 email,
                 password
             });
 
-            console.log('✅ Login exitoso');
-            
+
             if (response.data.token) {
                 localStorage.setItem('auth_token', response.data.token);
                 axiosClient.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
             }
-            
+
             return response.data;
 
         } catch (error) {
-            console.error('❌ Error en login:', error);
-            
+
             if (error.response?.status === 422) {
                 throw new Error('Email o contraseña incorrectos');
             } else {

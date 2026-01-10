@@ -104,25 +104,28 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label class="form-label">Nombre completo</label>
-                        <input type="text" v-model="userForm.name" class="form-control"
-                            placeholder="Nombre del usuario">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Email</label>
-                        <input type="email" v-model="userForm.email" class="form-control"
-                            placeholder="correo@ejemplo.com">
-                    </div>
-                    <div v-if="modalType === 'addUser'" class="form-group">
-                        <label class="form-label">Contraseña</label>
-                        <input type="password" v-model="userForm.password" class="form-control" placeholder="••••••••">
-                    </div>
-                    <div v-if="modalType === 'addUser'" class="form-group">
-                        <label class="form-label">Confirmar contraseña</label>
-                        <input type="password" v-model="userForm.password_confirmation" class="form-control"
-                            placeholder="••••••••">
-                    </div>
+                    <form @submit.prevent="saveUser">
+                        <div class="form-group">
+                            <label class="form-label">Nombre completo</label>
+                            <input type="text" v-model="userForm.name" class="form-control"
+                                placeholder="Nombre del usuario">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" v-model="userForm.email" class="form-control"
+                                placeholder="correo@ejemplo.com" autocomplete="email">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Contraseña</label>
+                            <input type="password" v-model="userForm.password" class="form-control"
+                                placeholder="••••••••" autocomplete="new-password">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Confirmar contraseña</label>
+                            <input type="password" v-model="userForm.password_confirmation" class="form-control"
+                                placeholder="••••••••" autocomplete="new-password">
+                        </div>
+                    </form>
                     <!-- <div class="form-group">
                         <label class="form-label">Rol del usuario</label>
                         <div class="checkbox-group">
@@ -144,20 +147,13 @@
                             </label>
                         </div>
                     </div> -->
-                    <div class="form-group">
-                        <label class="form-label">Rol del usuario</label>
-                        <select v-model="userForm.role" class="form-control">
-                            <option value="">Seleccionar rol</option>
-                            <option value="admin">Administrador</option>
-                            <option value="client">Cliente</option>
-                        </select>
-                    </div>
+
                 </div>
                 <div class="modal-footer">
                     <button class="modal-btn secondary" @click="closeModal">Cancelar</button>
                     <button class="modal-btn primary" @click="saveUser" :disabled="isSubmitting">
                         <span v-if="!isSubmitting">{{ modalType === 'addUser' ? 'Crear Usuario' : 'Guardar Cambios'
-                            }}</span>
+                        }}</span>
                         <span v-else class="loading-text">
                             <svg class="spinner-small" viewBox="0 0 24 24">
                                 <circle class="spinner-circle" cx="12" cy="12" r="10" fill="none" stroke="currentColor"
@@ -176,15 +172,10 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { useAuthStore } from '@/stores/authStore';
 import adminService from '@/api/adminService';
 import Swal from 'sweetalert2';
-import UserView from '@/modules/Admin/UserView.vue';
 import sucursalesService from '@/api/Admin/SucursalesService';
 
-const router = useRouter();
-const authStore = useAuthStore();
 
 const users = ref([]);
 const isLoading = ref(false);
@@ -207,7 +198,7 @@ const fetchUsers = async (page = 1) => {
             current_page: response.pagination.current_page || 1,
             total_pages: response.pagination.last_page || 1
         };
-       
+
     } catch (error) {
         console.error('Error al cargar sucursales:', error);
     } finally {
@@ -238,13 +229,7 @@ const formatDate = (dateString) => {
     });
 };
 
-const stats = ref({
-    totalUsers: 156,
-    activeRewards: 12,
-    totalRewards: 15,
-    pendingRedemptions: 8,
-    totalPointsDistributed: 125000
-});
+
 
 // Modal state
 const showModal = ref(false);
@@ -265,14 +250,18 @@ const openModal = (type, data = null) => {
     showModal.value = true;
 
     if (type === 'editUser' && data) {
-        userForm.value = { ...data };
-    } else if (type === 'editReward' && data) {
-        rewardForm.value = { ...data };
-    } else if (type === 'addPoints' && data) {
-        selectedUser.value = data;
-        pointsForm.value.user_id = data.id;
+        // Usamos spread para copiar los datos y asegurarnos de incluir el ID
+        userForm.value = {
+            id: data.id,
+            name: data.name,
+            email: data.email,
+            password: '', // Limpiamos campos de password por seguridad
+            password_confirmation: ''
+        };
     } else {
+        // Reset para nuevo usuario
         selectedUser.value = null;
+        userForm.value = { name: '', email: '', password: '', password_confirmation: '', role: '' };
     }
 };
 
@@ -281,93 +270,48 @@ const closeModal = () => {
     modalType.value = '';
     selectedUser.value = null;
     userForm.value = { name: '', email: '', password: '', password_confirmation: '', role: '' };
-    rewardForm.value = { name: '', description: '', points_required: '', stock: '', image: '' };
-    pointsForm.value = { user_id: '', type: 'add', points: '', description: '' };
 };
 
 const saveUser = async () => {
     isSubmitting.value = true;
     try {
         if (modalType.value === 'addUser') {
-            // Validaciones básicas
-            if (!userForm.value.name || !userForm.value.email || !userForm.value.password) {
-                await Swal.fire({
-                    icon: 'warning',
-                    title: 'Campos incompletos',
-                    text: 'Por favor complete todos los campos obligatorios',
-                    confirmButtonText: 'Entendido'
-                });
-                return;
-            }
+            // ... (tu lógica de crear usuario existente)
+        } else if (modalType.value === 'editUser') {
 
-            if (userForm.value.password !== userForm.value.password_confirmation) {
-                await Swal.fire({
-                    icon: 'warning',
-                    title: 'Contraseñas no coinciden',
-                    text: 'Las contraseñas deben ser iguales',
-                    confirmButtonText: 'Entendido'
-                });
-                return;
-            }
-
-            if (userForm.value.role.length === 0) {
-                await Swal.fire({
-                    icon: 'warning',
-                    title: 'Rol requerido',
-                    text: 'Debe seleccionar un rol',
-                    confirmButtonText: 'Entendido'
-                });
-                return;
-            }
-
-            // Preparar datos para el backend - USAR 'role' EN SINGULAR
+            // 1. Preparamos los datos (ajusta según lo que espere tu UserController)
             const userData = {
                 name: userForm.value.name,
                 email: userForm.value.email,
-                password: userForm.value.password,
-                password_confirmation: userForm.value.password_confirmation,
-                role: userForm.value.role // Tomar solo el primer rol seleccionado
+                // Si envías contraseña solo si se escribió algo:
+                ...(userForm.value.password && {
+                    password: userForm.value.password,
+                    password_confirmation: userForm.value.password_confirmation
+                })
             };
 
-            // console.log('Datos a enviar:', userData); // DEBUG
+            // 2. Llamada al servicio pasando el ID y los datos
+            await sucursalesService.updateSucursal(userForm.value.id, userData);
 
-            // Llamada REAL al servicio
-            const newUser = await adminService.createUser(userData);
-
-            // Agregar el usuario a la lista local
-            users.value.push({
-                id: users.value.length + 1,
-                name: newUser.name || userForm.value.name,
-                email: newUser.email || userForm.value.email,
-                balance: 0,
-                created_at: new Date().toISOString(),
-                role: [{ name: userForm.value.role }] // Mantener como array para la vista
-            });
-
+            // 3. Feedback visual
             Swal.fire({
                 icon: 'success',
-                title: '¡Éxito!',
-                text: 'Usuario creado exitosamente',
+                title: '¡Actualizado!',
+                text: 'La sucursal se ha actualizado correctamente',
                 timer: 2000,
                 showConfirmButton: false
             });
-        } else {
-            // Para editar (mantener simulado por ahora)
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            const index = users.value.findIndex(u => u.id === userForm.value.id);
-            if (index !== -1) {
-                users.value[index] = { ...users.value[index], ...userForm.value };
-            }
-            alert('Usuario actualizado exitosamente');
-        }
 
-        closeModal();
+            // 4. Refrescar la tabla
+            await fetchUsers(paginationInfo.value.current_page);
+            closeModal();
+        }
     } catch (error) {
         console.error('Error en saveUser:', error);
         Swal.fire({
             icon: 'error',
-            title: 'Error',
-            text: error.message || 'Error al guardar usuario',
+            title: 'Error al actualizar',
+            text: error.message || 'Ocurrió un error inesperado',
             confirmButtonText: 'Entendido'
         });
     } finally {
@@ -391,20 +335,9 @@ const deleteUser = async (user) => {
 
 
 
-const handleLogout = async () => {
-    await authStore.handleLogout();
-    router.push('/login');
-};
 
 onMounted(async () => {
     fetchUsers(1)
-    // Cargar datos iniciales
-    // await Promise.all([
-    //     fetchUsers(1),
-    //     //   fetchRewards(),
-    //     //   fetchRedemptions(),
-    //     //   fetchTransactions()
-    // ]);
 });
 </script>
 
