@@ -95,7 +95,7 @@
             @click="closeModal">
             <div class="modal-dialog" @click.stop>
                 <div class="modal-header">
-                    <h3 class="modal-title">{{ modalType === 'addUser' ? 'Agregar Usuario' : 'Editar Usuario' }}</h3>
+                    <h3 class="modal-title">{{ modalType === 'addUser' ? 'Agregar Sucursal' : 'Editar Sucursal' }}</h3>
                     <button class="modal-close-btn" @click="closeModal">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -105,55 +105,64 @@
                 </div>
                 <div class="modal-body">
                     <form @submit.prevent="saveUser">
+                        <h4 class="section-divider">Datos de la Sucursal</h4>
                         <div class="form-group">
-                            <label class="form-label">Nombre completo</label>
+                            <label class="form-label">Nombre de la Sucursal</label>
+                            <input type="text" v-model="userForm.branch_name" class="form-control"
+                                placeholder="Ej. Sucursal Matriz" required>
+                        </div>
+                        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div class="form-group">
+                                <label class="form-label">Teléfono</label>
+                                <input type="text" v-model="userForm.phone" class="form-control"
+                                    placeholder="3312345678">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Ciudad</label>
+                                <input type="text" v-model="userForm.city" class="form-control" placeholder="Ciudad">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Dirección</label>
+                                <input type="text" v-model="userForm.address" class="form-control"
+                                    placeholder="Calle #123, Col...">
+                            </div>
+                        </div>
+
+                        <hr class="modal-hr">
+
+                        <h4 class="section-divider">Datos de Acceso</h4>
+                        <div class="form-group">
+                            <label class="form-label">Nombre de la cuenta de la sucursal</label>
                             <input type="text" v-model="userForm.name" class="form-control"
-                                placeholder="Nombre del usuario">
+                                placeholder="Nombre de quien usará la cuenta" required>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Email</label>
+                            <label class="form-label">Email de la cuenta</label>
                             <input type="email" v-model="userForm.email" class="form-control"
-                                placeholder="correo@ejemplo.com" autocomplete="email">
+                                placeholder="sucursal@ejemplo.com" autocomplete="email" required>
                         </div>
-                        <div class="form-group">
-                            <label class="form-label">Contraseña</label>
-                            <input type="password" v-model="userForm.password" class="form-control"
-                                placeholder="••••••••" autocomplete="new-password">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Confirmar contraseña</label>
-                            <input type="password" v-model="userForm.password_confirmation" class="form-control"
-                                placeholder="••••••••" autocomplete="new-password">
+
+                        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div class="form-group">
+                                <label class="form-label">Contraseña</label>
+                                <input type="password" v-model="userForm.password" class="form-control"
+                                    placeholder="••••••••" autocomplete="new-password"
+                                    :required="modalType === 'addUser'">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Confirmar contraseña</label>
+                                <input type="password" v-model="userForm.password_confirmation" class="form-control"
+                                    placeholder="••••••••" autocomplete="new-password"
+                                    :required="modalType === 'addUser'">
+                            </div>
                         </div>
                     </form>
-                    <!-- <div class="form-group">
-                        <label class="form-label">Rol del usuario</label>
-                        <div class="checkbox-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" v-model="userForm.role" value="admin">
-                                <span class="checkbox-custom"></span>
-                                <div class="checkbox-content">
-                                    <span class="checkbox-title">Administrador</span>
-                                    <span class="checkbox-description">Acceso completo al panel de administración</span>
-                                </div>
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" v-model="userForm.role" value="client">
-                                <span class="checkbox-custom"></span>
-                                <div class="checkbox-content">
-                                    <span class="checkbox-title">Cliente</span>
-                                    <span class="checkbox-description">Acceso al portal de recompensas</span>
-                                </div>
-                            </label>
-                        </div>
-                    </div> -->
-
                 </div>
                 <div class="modal-footer">
                     <button class="modal-btn secondary" @click="closeModal">Cancelar</button>
                     <button class="modal-btn primary" @click="saveUser" :disabled="isSubmitting">
                         <span v-if="!isSubmitting">{{ modalType === 'addUser' ? 'Crear Usuario' : 'Guardar Cambios'
-                        }}</span>
+                            }}</span>
                         <span v-else class="loading-text">
                             <svg class="spinner-small" viewBox="0 0 24 24">
                                 <circle class="spinner-circle" cx="12" cy="12" r="10" fill="none" stroke="currentColor"
@@ -175,6 +184,7 @@ import { ref, computed, onMounted } from 'vue';
 import adminService from '@/api/adminService';
 import Swal from 'sweetalert2';
 import sucursalesService from '@/api/Admin/SucursalesService';
+import branchService from '@/api/Admin/BranchService';
 
 
 const users = ref([]);
@@ -237,14 +247,6 @@ const modalType = ref('');
 const selectedUser = ref(null);
 const isSubmitting = ref(false);
 
-const userForm = ref({
-    name: '',
-    email: '',
-    password: '',
-    password_confirmation: '',
-    role: ''
-});
-
 const openModal = (type, data = null) => {
     modalType.value = type;
     showModal.value = true;
@@ -272,64 +274,105 @@ const closeModal = () => {
     userForm.value = { name: '', email: '', password: '', password_confirmation: '', role: '' };
 };
 
+// ... dentro de saveUser ...
 const saveUser = async () => {
     isSubmitting.value = true;
     try {
         if (modalType.value === 'addUser') {
-            // ... (tu lógica de crear usuario existente)
-        } else if (modalType.value === 'editUser') {
+            // Validamos que las contraseñas coincidan localmente
+            if (userForm.value.password !== userForm.value.password_confirmation) {
+                throw new Error('Las contraseñas no coinciden');
+            }
 
-            // 1. Preparamos los datos (ajusta según lo que espere tu UserController)
-            const userData = {
-                name: userForm.value.name,
+            // Preparamos los datos según tu controlador Laravel
+            const payload = {
+                branch_name: userForm.value.branch_name,
+                city: userForm.value.city,
+                address: userForm.value.address,
+                phone: userForm.value.phone,
+                name: userForm.value.branch_name, // Nombre del encargado o usuario
                 email: userForm.value.email,
-                // Si envías contraseña solo si se escribió algo:
-                ...(userForm.value.password && {
-                    password: userForm.value.password,
-                    password_confirmation: userForm.value.password_confirmation
-                })
+                password: userForm.value.password,
+                password_confirmation: userForm.value.password_confirmation
             };
 
-            // 2. Llamada al servicio pasando el ID y los datos
-            await sucursalesService.updateSucursal(userForm.value.id, userData);
+            await branchService.store(payload);
 
-            // 3. Feedback visual
             Swal.fire({
                 icon: 'success',
-                title: '¡Actualizado!',
-                text: 'La sucursal se ha actualizado correctamente',
+                title: '¡Creado!',
+                text: 'La sucursal y su cuenta han sido registradas',
                 timer: 2000,
                 showConfirmButton: false
             });
 
-            // 4. Refrescar la tabla
-            await fetchUsers(paginationInfo.value.current_page);
+            await fetchUsers(1); // Volver a la página 1 para ver el nuevo registro
             closeModal();
+
+        } else if (modalType.value === 'editUser') {
+            // ... (tu lógica de edición existente)
         }
     } catch (error) {
-        console.error('Error en saveUser:', error);
         Swal.fire({
             icon: 'error',
-            title: 'Error al actualizar',
-            text: error.message || 'Ocurrió un error inesperado',
-            confirmButtonText: 'Entendido'
+            title: 'Error',
+            text: error.response?.data?.message || error.message || 'Error al procesar la solicitud'
         });
     } finally {
         isSubmitting.value = false;
     }
 };
 
+// Asegúrate de resetear estos campos en closeModal y openModal
+const userForm = ref({
+    branch_name: '',
+    city: '',
+    address: '',
+    phone: '',
+    name: '',
+    email: '',
+    password: '',
+    password_confirmation: ''
+});
+
 
 
 const deleteUser = async (user) => {
-    if (!confirm(`¿Estás seguro de eliminar al usuario ${user.name}?`)) return;
+    const result = await Swal.fire({
+        title: '¿Eliminar sucursal?',
+        text: `La sucursal ${user.name} se eliminará.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    });
 
-    try {
-        // await axios.delete(`/api/admin/users/${user.id}`);
-        users.value = users.value.filter(u => u.id !== user.id);
-        alert('Usuario eliminado exitosamente');
-    } catch (error) {
-        alert('Error al eliminar usuario');
+    if (result.isConfirmed) {
+        try {
+            isLoading.value = true;
+            await branchService.changeStatus(user.branch_id);
+
+            await Swal.fire({
+                icon: 'success',
+                title: '¡Eliminada!',
+                text: 'La sucursal ha sido eliminada correctamente.',
+                timer: 2000,
+                showConfirmButton: false
+            });
+            await fetchUsers(paginationInfo.value.current_page);
+
+        } catch (error) {
+            console.error('Error al cambiar status:', error);
+            Swal.fire(
+                'Error',
+                'No se pudo cambiar el estatus de la sucursal.',
+                'error'
+            );
+        } finally {
+            isLoading.value = false;
+        }
     }
 };
 
