@@ -7,6 +7,9 @@ const branchService = {
     async store(formData) {
         return await axiosClient.post('admin/branches/store', formData);
     },
+    async update(id, formData) {
+        return await axiosClient.patch(`admin/branches/update/${id}`, formData);
+    },
 };
 
 export default branchService;

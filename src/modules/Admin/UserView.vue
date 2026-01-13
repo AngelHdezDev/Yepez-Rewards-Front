@@ -112,11 +112,11 @@
                                 placeholder="Ej. Sucursal Matriz" required>
                         </div>
                         <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <label class="form-label">Teléfono</label>
                                 <input type="text" v-model="userForm.phone" class="form-control"
                                     placeholder="3312345678">
-                            </div>
+                            </div> -->
                             <div class="form-group">
                                 <label class="form-label">Ciudad</label>
                                 <input type="text" v-model="userForm.city" class="form-control" placeholder="Ciudad">
@@ -162,7 +162,7 @@
                     <button class="modal-btn secondary" @click="closeModal">Cancelar</button>
                     <button class="modal-btn primary" @click="saveUser" :disabled="isSubmitting">
                         <span v-if="!isSubmitting">{{ modalType === 'addUser' ? 'Crear Usuario' : 'Guardar Cambios'
-                            }}</span>
+                        }}</span>
                         <span v-else class="loading-text">
                             <svg class="spinner-small" viewBox="0 0 24 24">
                                 <circle class="spinner-circle" cx="12" cy="12" r="10" fill="none" stroke="currentColor"
@@ -252,18 +252,24 @@ const openModal = (type, data = null) => {
     showModal.value = true;
 
     if (type === 'editUser' && data) {
-        // Usamos spread para copiar los datos y asegurarnos de incluir el ID
         userForm.value = {
-            id: data.id,
+            id: data.id, // ID del usuario o de la sucursal según tu lógica
+            branch_id: data.branch_id, // Asegúrate de tener el ID de la sucursal
+            branch_name: data.branch?.name || '', // O el campo que traiga el nombre de la sucursal
+            city: data.branch?.city || '',    // <--- CORRECCIÓN
+            address: data.branch?.address || '', // <--- CORRECCIÓN
+            // phone: data.phone || '',
             name: data.name,
             email: data.email,
-            password: '', // Limpiamos campos de password por seguridad
+            password: '',
             password_confirmation: ''
         };
     } else {
-        // Reset para nuevo usuario
-        selectedUser.value = null;
-        userForm.value = { name: '', email: '', password: '', password_confirmation: '', role: '' };
+        // Reset para nuevo
+        userForm.value = {
+            branch_name: '', city: '', address: '', phone: '',
+            name: '', email: '', password: '', password_confirmation: ''
+        };
     }
 };
 
@@ -289,8 +295,8 @@ const saveUser = async () => {
                 branch_name: userForm.value.branch_name,
                 city: userForm.value.city,
                 address: userForm.value.address,
-                phone: userForm.value.phone,
-                name: userForm.value.branch_name, // Nombre del encargado o usuario
+                // phone: userForm.value.phone,
+                name: userForm.value.name, // Nombre del encargado o usuario
                 email: userForm.value.email,
                 password: userForm.value.password,
                 password_confirmation: userForm.value.password_confirmation
@@ -310,7 +316,39 @@ const saveUser = async () => {
             closeModal();
 
         } else if (modalType.value === 'editUser') {
-            // ... (tu lógica de edición existente)
+            // 1. Preparamos el payload
+            const payload = {
+                branch_name: userForm.value.branch_name,
+                city: userForm.value.city,
+                address: userForm.value.address,
+                // phone: userForm.value.phone,
+                name: userForm.value.name,
+                email: userForm.value.email,
+            };
+
+            // Solo enviamos password si el usuario escribió algo
+            if (userForm.value.password) {
+                if (userForm.value.password !== userForm.value.password_confirmation) {
+                    throw new Error('Las contraseñas no coinciden');
+                }
+                payload.password = userForm.value.password;
+                payload.password_confirmation = userForm.value.password_confirmation;
+            }
+
+            // 2. Llamada al endpoint PATCH
+            // Nota: Usa el ID de la sucursal (branch_id)
+            await branchService.update(userForm.value.branch_id, payload);
+
+            Swal.fire({
+                icon: 'success',
+                title: '¡Actualizado!',
+                text: 'La sucursal se ha actualizado correctamente',
+                timer: 2000,
+                showConfirmButton: false
+            });
+
+            await fetchUsers(paginationInfo.value.current_page);
+            closeModal();
         }
     } catch (error) {
         Swal.fire({
@@ -328,7 +366,7 @@ const userForm = ref({
     branch_name: '',
     city: '',
     address: '',
-    phone: '',
+    // phone: '',
     name: '',
     email: '',
     password: '',
