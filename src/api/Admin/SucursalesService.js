@@ -17,7 +17,15 @@ const sucursalesService = {
         } catch (error) {
             throw error.response?.data || new Error('Error updating sucursal');
         }
-    }
+    },
+    async getSucursalDetails(id) {
+        try {
+            const response = await axiosClient.get(`admin/users/getSucursalDetails/${id}`);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || new Error('Error fetching sucursal details');
+        }
+    },
 };
 
 export default sucursalesService;

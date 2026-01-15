@@ -48,10 +48,17 @@
                     <td>{{ formatDate(user.created_at) }}</td>
                     <td>
                         <div class="action-buttons">
-                            <button class="icon-btn" @click="openModal('addPoints', user)" title="Asignar puntos">
+                            <!-- <button class="icon-btn" @click="openModal('addPoints', user)" title="Asignar puntos">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <line x1="12" y1="1" x2="12" y2="23"></line>
                                     <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                                </svg>
+                            </button> -->
+                            <button class="icon-btn info" @click="viewBranch(user.id)" title="Ver detalles">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
                                 </svg>
                             </button>
                             <button class="icon-btn" @click="openModal('editUser', user)" title="Editar">
@@ -181,15 +188,21 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import adminService from '@/api/adminService';
 import Swal from 'sweetalert2';
 import sucursalesService from '@/api/Admin/SucursalesService';
 import branchService from '@/api/Admin/BranchService';
 
-
+const router = useRouter();
 const users = ref([]);
 const isLoading = ref(false);
 const searchQuery = ref('');
+
+const viewBranch = (id) => {
+    console.log('Navegando a detalles de sucursal con ID:', id);
+    router.push({ name: 'DetailsBranch', params: { id: id } });
+};
 
 const paginationInfo = ref({
     current_page: 1,

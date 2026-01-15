@@ -47,6 +47,12 @@ const routes = [
         component: () => import('@/modules/dashboardAdmin/pages/DashboardAdminView.vue'),
         meta: { requiresAuth: true, requiredRole: 'yepez' }
     },
+    {
+        path: '/details-branch/:id',
+        name: 'DetailsBranch',
+        component: () => import('@/modules/Admin/DetailsView.vue'),
+        meta: { requiresAuth: true, requiredRole: 'yepez' }
+    },
     // Añade el resto de tus rutas protegidas aquí
 
     // Ruta Raíz: Interceptada por el guard para redirigir según el rol

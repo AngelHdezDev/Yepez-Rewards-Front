@@ -13,6 +13,15 @@ const transactionService = {
         } catch (error) {
             throw error.response?.data || new Error('Error al obtener transacciones');
         }
-    }
+    },
+    async getTotalTransacitonsByUser(id, page = 1) {
+        try {
+            const response = await axiosClient.get(`/admin/transactions/getTotalTransacitonsByUser/${id}?page=${page}`);
+            return response;
+        } catch (error) {
+            console.error("Error al obtener transacciones:", error);
+            throw error;
+        }
+    },
 };
 export default transactionService;
