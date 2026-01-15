@@ -97,6 +97,7 @@
             </button>
         </div>
     </div>
+    
     <transition name="modal-fade">
         <div v-if="showModal && (modalType === 'addUser' || modalType === 'editUser')" class="modal-overlay"
             @click="closeModal">

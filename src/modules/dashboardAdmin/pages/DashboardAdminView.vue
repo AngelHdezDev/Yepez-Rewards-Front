@@ -243,77 +243,6 @@
 
         <!-- Users View -->
         <div v-else-if="currentView === 'users'" class="view-container">
-          <!-- <div class="view-header">
-            <div class="search-box">
-              <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <path d="m21 21-4.35-4.35"></path>
-              </svg>
-              <input type="text" v-model="searchQuery" placeholder="Buscar usuarios..." class="search-input" />
-            </div>
-            <button class="primary-btn" @click="openModal('addUser')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-              Agregar Usuario
-            </button>
-          </div>
-
-          <div class="table-container">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Usuario</th>
-                  <th>Email</th>
-                  <th>Puntos</th>
-                  <th>Registrado</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="user in filteredUsers" :key="user.id">
-                  <td>
-                    <div class="user-cell">
-                      <div class="user-avatar-small">
-                        {{ user.name.charAt(0).toUpperCase() }}
-                      </div>
-                      <span class="user-name-cell">{{ user.name }}</span>
-                    </div>
-                  </td>
-                  <td>{{ user.email }}</td>
-                  <td>
-                    <span class="points-badge">{{ formatPoints(user.balance) }}</span>
-                  </td>
-                  <td>{{ formatDate(user.created_at) }}</td>
-                  <td>
-                    <div class="action-buttons">
-                      <button class="icon-btn" @click="openModal('addPoints', user)" title="Asignar puntos">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <line x1="12" y1="1" x2="12" y2="23"></line>
-                          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                        </svg>
-                      </button>
-                      <button class="icon-btn" @click="openModal('editUser', user)" title="Editar">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                        </svg>
-                      </button>
-                      <button class="icon-btn danger" @click="deleteUser(user)" title="Eliminar">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <polyline points="3 6 5 6 21 6"></polyline>
-                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
-                          </path>
-                        </svg>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div> -->
-
           <user-view></user-view>
         </div>
 
@@ -341,7 +270,7 @@
         @click="closeModal">
         <div class="modal-dialog" @click.stop>
           <div class="modal-header">
-            <h3 class="modal-title">{{ modalType === 'addUser' ? 'Agregar Usuario' : 'Editar Usuario' }}</h3>
+            <h3 class="modal-title">{{ modalType === 'addUser' ? 'Agregar Sucursal' : 'Editar Sucursal' }}</h3>
             <button class="modal-close-btn" @click="closeModal">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -350,57 +279,62 @@
             </button>
           </div>
           <div class="modal-body">
-            <div class="form-group">
-              <label class="form-label">Nombre completo</label>
-              <input type="text" v-model="userForm.name" class="form-control" placeholder="Nombre del usuario">
-            </div>
-            <div class="form-group">
-              <label class="form-label">Email</label>
-              <input type="email" v-model="userForm.email" class="form-control" placeholder="correo@ejemplo.com">
-            </div>
-            <div v-if="modalType === 'addUser'" class="form-group">
-              <label class="form-label">Contraseña</label>
-              <input type="password" v-model="userForm.password" class="form-control" placeholder="••••••••">
-            </div>
-            <div v-if="modalType === 'addUser'" class="form-group">
-              <label class="form-label">Confirmar contraseña</label>
-              <input type="password" v-model="userForm.password_confirmation" class="form-control"
-                placeholder="••••••••">
-            </div>
-            <!-- <div class="form-group">
-              <label class="form-label">Rol del usuario</label>
-              <div class="checkbox-group">
-                <label class="checkbox-label">
-                  <input type="checkbox" v-model="userForm.role" value="admin">
-                  <span class="checkbox-custom"></span>
-                  <div class="checkbox-content">
-                    <span class="checkbox-title">Administrador</span>
-                    <span class="checkbox-description">Acceso completo al panel de administración</span>
-                  </div>
-                </label>
-                <label class="checkbox-label">
-                  <input type="checkbox" v-model="userForm.role" value="client">
-                  <span class="checkbox-custom"></span>
-                  <div class="checkbox-content">
-                    <span class="checkbox-title">Cliente</span>
-                    <span class="checkbox-description">Acceso al portal de recompensas</span>
-                  </div>
-                </label>
+            <form @submit.prevent="saveUser">
+              <h4 class="section-divider">Datos de la Sucursal</h4>
+              <div class="form-group">
+                <label class="form-label">Nombre de la Sucursal</label>
+                <input type="text" v-model="userForm.branch_name" class="form-control" placeholder="Ej. Sucursal Matriz"
+                  required>
               </div>
-            </div> -->
-            <div class="form-group">
-              <label class="form-label">Rol del usuario</label>
-              <select v-model="userForm.role" class="form-control">
-                <option value="">Seleccionar rol</option>
-                <option value="admin">Administrador</option>
-                <option value="client">Cliente</option>
-              </select>
-            </div>
+              <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <!-- <div class="form-group">
+                                <label class="form-label">Teléfono</label>
+                                <input type="text" v-model="userForm.phone" class="form-control"
+                                    placeholder="3312345678">
+                            </div> -->
+                <div class="form-group">
+                  <label class="form-label">Ciudad</label>
+                  <input type="text" v-model="userForm.city" class="form-control" placeholder="Ciudad">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Dirección</label>
+                  <input type="text" v-model="userForm.address" class="form-control" placeholder="Calle #123, Col...">
+                </div>
+              </div>
+
+              <hr class="modal-hr">
+
+              <h4 class="section-divider">Datos de Acceso</h4>
+              <div class="form-group">
+                <label class="form-label">Nombre de la cuenta de la sucursal</label>
+                <input type="text" v-model="userForm.name" class="form-control"
+                  placeholder="Nombre de quien usará la cuenta" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email de la cuenta</label>
+                <input type="email" v-model="userForm.email" class="form-control" placeholder="sucursal@ejemplo.com"
+                  autocomplete="email" required>
+              </div>
+
+              <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div class="form-group">
+                  <label class="form-label">Contraseña</label>
+                  <input type="password" v-model="userForm.password" class="form-control" placeholder="••••••••"
+                    autocomplete="new-password" :required="modalType === 'addUser'">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Confirmar contraseña</label>
+                  <input type="password" v-model="userForm.password_confirmation" class="form-control"
+                    placeholder="••••••••" autocomplete="new-password" :required="modalType === 'addUser'">
+                </div>
+              </div>
+            </form>
           </div>
           <div class="modal-footer">
             <button class="modal-btn secondary" @click="closeModal">Cancelar</button>
             <button class="modal-btn primary" @click="saveUser" :disabled="isSubmitting">
-              <span v-if="!isSubmitting">{{ modalType === 'addUser' ? 'Crear Usuario' : 'Guardar Cambios' }}</span>
+              <span v-if="!isSubmitting">{{ modalType === 'addUser' ? 'Crear Usuario' : 'Guardar Cambios'
+              }}</span>
               <span v-else class="loading-text">
                 <svg class="spinner-small" viewBox="0 0 24 24">
                   <circle class="spinner-circle" cx="12" cy="12" r="10" fill="none" stroke="currentColor"
@@ -420,7 +354,8 @@
         @click="closeModal">
         <div class="modal-dialog" @click.stop>
           <div class="modal-header">
-            <h3 class="modal-title">{{ modalType === 'addReward' ? 'Nueva Recompensa' : 'Editar Recompensa' }}</h3>
+            <h3 class="modal-title">{{ modalType === 'addReward' ? 'Nueva Recompensa' : 'Editar Recompensa' }}
+            </h3>
             <button class="modal-close-btn" @click="closeModal">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -442,7 +377,11 @@
             <div class="form-row">
               <div class="form-group">
                 <label class="form-label">Puntos requeridos</label>
-                <input type="number" v-model="rewardForm.points_required" class="form-control" placeholder="5000">
+                <input type="number" v-model="rewardForm.cost_points" class="form-control" placeholder="5000">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Codigo de la recompensa</label>
+                <input type="text" v-model="rewardForm.code" class="form-control" placeholder="CAFE100">
               </div>
               <div class="form-group">
                 <label class="form-label">Stock disponible</label>
@@ -450,15 +389,31 @@
               </div>
             </div>
             <div class="form-group">
-              <label class="form-label">URL de imagen (opcional)</label>
-              <input type="url" v-model="rewardForm.image" class="form-control"
-                placeholder="https://ejemplo.com/imagen.jpg">
+              <label class="form-label">Imagen de la recompensa</label>
+              <div class="image-upload-container">
+                <div class="image-preview" v-if="imagePreview">
+                  <img :src="imagePreview" alt="Vista previa">
+                  <button class="remove-image" @click="removeSelectedImage">×</button>
+                </div>
+
+                <div v-else class="image-placeholder" @click="$refs.fileInput.click()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <polyline points="21 15 16 10 5 21"></polyline>
+                  </svg>
+                  <span>Seleccionar imagen</span>
+                </div>
+
+                <input type="file" ref="fileInput" style="display: none" accept="image/*" @change="handleFileUpload">
+              </div>
             </div>
           </div>
           <div class="modal-footer">
             <button class="modal-btn secondary" @click="closeModal">Cancelar</button>
             <button class="modal-btn primary" @click="saveReward" :disabled="isSubmitting">
-              <span v-if="!isSubmitting">{{ modalType === 'addReward' ? 'Crear Recompensa' : 'Guardar Cambios' }}</span>
+              <span v-if="!isSubmitting">{{ modalType === 'addReward' ? 'Crear Recompensa' : 'Guardar Cambios'
+              }}</span>
               <span v-else class="loading-text">
                 <svg class="spinner-small" viewBox="0 0 24 24">
                   <circle class="spinner-circle" cx="12" cy="12" r="10" fill="none" stroke="currentColor"
@@ -562,9 +517,38 @@ import UserView from '@/modules/Admin/UserView.vue';
 import TransactionView from '@/modules/Admin/TransactionView.vue';
 import RedemptionView from '@/modules/Admin/RedemptionView.vue';
 import RewardsView from '@/modules/Admin/RewardsView.vue';
+import sucursalesService from '@/api/Admin/SucursalesService';
+import branchService from '@/api/Admin/BranchService';
+import rewardService from '@/api/Admin/RewardService.js';
 
 const router = useRouter();
 const authStore = useAuthStore();
+const imagePreview = ref(null);
+const selectedFile = ref(null);
+const fileInput = ref(null);
+
+
+const handleFileUpload = (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  // Validar tipo y tamaño si es necesario
+  selectedFile.value = file;
+
+  // Crear vista previa
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    imagePreview.value = e.target.result;
+  };
+  reader.readAsDataURL(file);
+};
+
+// Quitar la imagen seleccionada
+const removeSelectedImage = () => {
+  selectedFile.value = null;
+  imagePreview.value = null;
+  if (fileInput.value) fileInput.value.value = '';
+};
 
 // State
 const currentView = ref('overview');
@@ -682,86 +666,75 @@ const saveUser = async () => {
   isSubmitting.value = true;
   try {
     if (modalType.value === 'addUser') {
-      // Validaciones básicas
-      if (!userForm.value.name || !userForm.value.email || !userForm.value.password) {
-        await Swal.fire({
-          icon: 'warning',
-          title: 'Campos incompletos',
-          text: 'Por favor complete todos los campos obligatorios',
-          confirmButtonText: 'Entendido'
-        });
-        return;
-      }
-
+      // Validamos que las contraseñas coincidan localmente
       if (userForm.value.password !== userForm.value.password_confirmation) {
-        await Swal.fire({
-          icon: 'warning',
-          title: 'Contraseñas no coinciden',
-          text: 'Las contraseñas deben ser iguales',
-          confirmButtonText: 'Entendido'
-        });
-        return;
+        throw new Error('Las contraseñas no coinciden');
       }
 
-      if (userForm.value.role.length === 0) {
-        await Swal.fire({
-          icon: 'warning',
-          title: 'Rol requerido',
-          text: 'Debe seleccionar un rol',
-          confirmButtonText: 'Entendido'
-        });
-        return;
-      }
-
-      // Preparar datos para el backend - USAR 'role' EN SINGULAR
-      const userData = {
-        name: userForm.value.name,
+      // Preparamos los datos según tu controlador Laravel
+      const payload = {
+        branch_name: userForm.value.branch_name,
+        city: userForm.value.city,
+        address: userForm.value.address,
+        // phone: userForm.value.phone,
+        name: userForm.value.name, // Nombre del encargado o usuario
         email: userForm.value.email,
         password: userForm.value.password,
-        password_confirmation: userForm.value.password_confirmation,
-        role: userForm.value.role // Tomar solo el primer rol seleccionado
+        password_confirmation: userForm.value.password_confirmation
       };
 
-      // console.log('Datos a enviar:', userData); // DEBUG
-
-      // Llamada REAL al servicio
-      const newUser = await adminService.createUser(userData);
-
-      // Agregar el usuario a la lista local
-      users.value.push({
-        id: users.value.length + 1,
-        name: newUser.name || userForm.value.name,
-        email: newUser.email || userForm.value.email,
-        balance: 0,
-        created_at: new Date().toISOString(),
-        role: [{ name: userForm.value.role }] // Mantener como array para la vista
-      });
+      await branchService.store(payload);
 
       Swal.fire({
         icon: 'success',
-        title: '¡Éxito!',
-        text: 'Usuario creado exitosamente',
+        title: '¡Creado!',
+        text: 'La sucursal y su cuenta han sido registradas',
         timer: 2000,
         showConfirmButton: false
       });
-    } else {
-      // Para editar (mantener simulado por ahora)
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      const index = users.value.findIndex(u => u.id === userForm.value.id);
-      if (index !== -1) {
-        users.value[index] = { ...users.value[index], ...userForm.value };
-      }
-      alert('Usuario actualizado exitosamente');
-    }
 
-    closeModal();
+      await closeModal();
+
+    } else if (modalType.value === 'editUser') {
+      // 1. Preparamos el payload
+      const payload = {
+        branch_name: userForm.value.branch_name,
+        city: userForm.value.city,
+        address: userForm.value.address,
+        // phone: userForm.value.phone,
+        name: userForm.value.name,
+        email: userForm.value.email,
+      };
+
+      // Solo enviamos password si el usuario escribió algo
+      if (userForm.value.password) {
+        if (userForm.value.password !== userForm.value.password_confirmation) {
+          throw new Error('Las contraseñas no coinciden');
+        }
+        payload.password = userForm.value.password;
+        payload.password_confirmation = userForm.value.password_confirmation;
+      }
+
+      // 2. Llamada al endpoint PATCH
+      // Nota: Usa el ID de la sucursal (branch_id)
+      await branchService.update(userForm.value.branch_id, payload);
+
+      Swal.fire({
+        icon: 'success',
+        title: '¡Actualizado!',
+        text: 'La sucursal se ha actualizado correctamente',
+        timer: 2000,
+        showConfirmButton: false
+      });
+
+      await fetchUsers(paginationInfo.value.current_page);
+      closeModal();
+    }
   } catch (error) {
-    console.error('Error en saveUser:', error);
     Swal.fire({
       icon: 'error',
       title: 'Error',
-      text: error.message || 'Error al guardar usuario',
-      confirmButtonText: 'Entendido'
+      text: error.response?.data?.message || error.message || 'Error al procesar la solicitud'
     });
   } finally {
     isSubmitting.value = false;
@@ -771,27 +744,34 @@ const saveUser = async () => {
 const saveReward = async () => {
   isSubmitting.value = true;
   try {
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    const formData = new FormData();
+    formData.append('name', rewardForm.value.name);
+    formData.append('description', rewardForm.value.description);
+    formData.append('cost_points', rewardForm.value.cost_points); // Nombre según Postman
+    formData.append('code', rewardForm.value.code);
+    formData.append('stock', rewardForm.value.stock);
+    formData.append('is_active', 1);
 
-    if (modalType.value === 'addReward') {
-      // await axios.post('/api/admin/rewards', rewardForm.value);
-      rewards.value.push({
-        id: rewards.value.length + 1,
-        ...rewardForm.value
-      });
-      alert('Recompensa creada exitosamente');
-    } else {
-      // await axios.put(`/api/admin/rewards/${rewardForm.value.id}`, rewardForm.value);
-      const index = rewards.value.findIndex(r => r.id === rewardForm.value.id);
-      if (index !== -1) {
-        rewards.value[index] = { ...rewardForm.value };
-      }
-      alert('Recompensa actualizada exitosamente');
+    // Si el usuario seleccionó un archivo nuevo
+    if (selectedFile.value) {
+      formData.append('image_url', selectedFile.value); // Campo File en la API
     }
 
-    closeModal();
+    if (modalType.value === 'addReward') {
+      await rewardService.addReward(formData);
+      Swal.fire('¡Éxito!', 'Recompensa creada', 'success');
+    } else {
+      // SIMULACIÓN DE PUT PARA LARAVEL
+      formData.append('_method', 'PUT');
+      await rewardService.updateReward(rewardForm.value.id, formData);
+      Swal.fire('¡Éxito!', 'Recompensa actualizada', 'success');
+    }
+
+    await closeModal();
   } catch (error) {
-    alert('Error al guardar recompensa');
+    // Extracción de errores corregida para mostrar el mensaje de validación de Laravel
+    const errorMsg = error.response?.data?.message || error.message || 'Error al procesar la solicitud';
+    Swal.fire('Error de Validación', errorMsg, 'error');
   } finally {
     isSubmitting.value = false;
   }
@@ -872,6 +852,41 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.image-upload-container {
+  border: 2px dashed #333;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-preview {
+  position: relative;
+  width: 100%;
+}
+
+.image-preview img {
+  max-height: 140px;
+  border-radius: 4px;
+}
+
+.remove-image {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: #ff4d4d;
+  color: white;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  border: none;
+  cursor: pointer;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
