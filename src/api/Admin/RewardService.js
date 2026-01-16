@@ -44,5 +44,14 @@ const rewardService = {
             throw error.response?.data || new Error('Error al desactivar la recompensa');
         }
     },
+
+    async getTotalRewards() {
+        try {
+            const response = await axiosClient.get('admin/reward/getTotalRewards');
+            return response.data.data;
+        } catch (error) {
+            throw error.response?.data || new Error('Error al obtener el total de recompensas');
+        }
+    }
 };
 export default rewardService;

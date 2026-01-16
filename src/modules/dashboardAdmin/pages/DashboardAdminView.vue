@@ -99,75 +99,7 @@
         <!-- Overview View -->
         <div v-if="currentView === 'overview'" class="view-container">
           <!-- Stats Cards -->
-          <div class="stats-grid">
-            <div class="stat-card blue">
-              <div class="stat-header">
-                <div class="stat-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                  </svg>
-                </div>
-                <span class="stat-label">Total Usuarios</span>
-              </div>
-              <div class="stat-value">{{ stats.totalUsers }}</div>
-              <div class="stat-footer">
-                <span class="stat-trend positive">+12% este mes</span>
-              </div>
-            </div>
-
-            <div class="stat-card green">
-              <div class="stat-header">
-                <div class="stat-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="8" r="7"></circle>
-                    <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
-                  </svg>
-                </div>
-                <span class="stat-label">Recompensas Activas</span>
-              </div>
-              <div class="stat-value">{{ stats.activeRewards }}</div>
-              <div class="stat-footer">
-                <span class="stat-trend">{{ stats.totalRewards }} en total</span>
-              </div>
-            </div>
-
-            <div class="stat-card orange">
-              <div class="stat-header">
-                <div class="stat-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg>
-                </div>
-                <span class="stat-label">Canjes Pendientes</span>
-              </div>
-              <div class="stat-value">{{ stats.pendingRedemptions }}</div>
-              <div class="stat-footer">
-                <button class="quick-action" @click="currentView = 'redemptions'">
-                  Ver todos →
-                </button>
-              </div>
-            </div>
-
-            <div class="stat-card purple">
-              <div class="stat-header">
-                <div class="stat-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polygon
-                      points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
-                    </polygon>
-                  </svg>
-                </div>
-                <span class="stat-label">Puntos Distribuidos</span>
-              </div>
-              <div class="stat-value">{{ formatPoints(stats.totalPointsDistributed) }}</div>
-              <div class="stat-footer">
-                <span class="stat-trend">Este mes</span>
-              </div>
-            </div>
-          </div>
+          <CardsDashboard />
 
           <!-- Recent Activity -->
           <div class="content-grid">
@@ -223,13 +155,13 @@
                   </svg>
                   <span>Nueva Recompensa</span>
                 </button>
-                <button class="quick-action-btn" @click="openModal('addPoints')">
+                <!-- <button class="quick-action-btn" @click="openModal('addPoints')">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                   </svg>
                   <span>Asignar Puntos</span>
-                </button>
+                </button> -->
                 <button class="quick-action-btn" @click="currentView = 'redemptions'">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="20 6 9 17 4 12"></polyline>
@@ -520,6 +452,7 @@ import RewardsView from '@/modules/Admin/RewardsView.vue';
 import sucursalesService from '@/api/Admin/SucursalesService';
 import branchService from '@/api/Admin/BranchService';
 import rewardService from '@/api/Admin/RewardService.js';
+import CardsDashboard from '@/components/Admin/CardsDashboard.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -552,10 +485,6 @@ const removeSelectedImage = () => {
 
 // State
 const currentView = ref('overview');
-const searchQuery = ref('');
-const searchRewardsQuery = ref('');
-const searchTransactionsQuery = ref('');
-const redemptionFilter = ref('all');
 
 const adminUser = ref({
   name: 'Admin User',
@@ -569,15 +498,6 @@ const stats = ref({
   pendingRedemptions: 8,
   totalPointsDistributed: 125000
 });
-
-
-
-const rewards = ref([
-  { id: 1, name: 'Tarjeta de regalo $500', description: 'Tarjeta válida en tiendas participantes', points_required: 5000, stock: 10, image: null },
-  { id: 2, name: 'Descuento 20% en servicio', description: 'Descuento en tu próximo servicio', points_required: 2000, stock: 25, image: null },
-  { id: 3, name: 'Kit de herramientas', description: 'Kit completo de herramientas básicas', points_required: 8000, stock: 3, image: null },
-  { id: 4, name: 'Tarjeta de regalo $1000', description: 'Tarjeta de mayor denominación', points_required: 10000, stock: 5, image: null }
-]);
 
 
 const recentActivity = ref([
@@ -808,30 +728,6 @@ const saveTransaction = async () => {
     alert('Error al procesar transacción');
   } finally {
     isSubmitting.value = false;
-  }
-};
-
-const deleteUser = async (user) => {
-  if (!confirm(`¿Estás seguro de eliminar al usuario ${user.name}?`)) return;
-
-  try {
-    // await axios.delete(`/api/admin/users/${user.id}`);
-    users.value = users.value.filter(u => u.id !== user.id);
-    alert('Usuario eliminado exitosamente');
-  } catch (error) {
-    alert('Error al eliminar usuario');
-  }
-};
-
-const deleteReward = async (reward) => {
-  if (!confirm(`¿Estás seguro de eliminar la recompensa "${reward.name}"?`)) return;
-
-  try {
-    // await axios.delete(`/api/admin/rewards/${reward.id}`);
-    rewards.value = rewards.value.filter(r => r.id !== reward.id);
-    alert('Recompensa eliminada exitosamente');
-  } catch (error) {
-    alert('Error al eliminar recompensa');
   }
 };
 

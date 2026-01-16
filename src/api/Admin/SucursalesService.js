@@ -26,6 +26,14 @@ const sucursalesService = {
             throw error.response?.data || new Error('Error fetching sucursal details');
         }
     },
+    async getTotalSucursales() {
+        try {
+            const response = await axiosClient.get('admin/users/getTotalSucursales');
+            return response.data.total_sucursales;
+        } catch (error) {
+            throw error.response?.data || new Error('Error fetching total sucursales');
+        }
+    }
 };
 
 export default sucursalesService;
