@@ -119,7 +119,7 @@
                   </svg>
                   <span>Agregar Sucursal</span>
                 </button>
-                <button class="quick-action-btn" @click="openModal('addReward')">
+                <button class="quick-action-btn" @click="openModal('addReward')" v-if="authStore.user.name == 'Admin'">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="8" r="7"></circle>
                     <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
@@ -431,6 +431,7 @@ import RecentActivity from '@/components/Admin/RecentActivity.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
+console.log('Auth Store User:', authStore.user.name);
 const imagePreview = ref(null);
 const selectedFile = ref(null);
 const fileInput = ref(null);
@@ -466,21 +467,6 @@ const adminUser = ref({
   email: 'admin@yepez.com'
 });
 
-const stats = ref({
-  totalUsers: 156,
-  activeRewards: 12,
-  totalRewards: 15,
-  pendingRedemptions: 8,
-  totalPointsDistributed: 125000
-});
-
-
-const recentActivity = ref([
-  { id: 1, type: 'user', text: 'Nuevo usuario registrado: Ana Martínez', time: 'Hace 2 horas' },
-  { id: 2, type: 'redemption', text: 'Juan Pérez canjeó Tarjeta de regalo $500', time: 'Hace 3 horas' },
-  { id: 3, type: 'reward', text: 'Nueva recompensa agregada: Kit de herramientas', time: 'Hace 5 horas' },
-  { id: 4, type: 'user', text: 'Carlos López alcanzó 20,000 puntos', time: 'Hace 1 día' }
-]);
 
 // Modal state
 const showModal = ref(false);

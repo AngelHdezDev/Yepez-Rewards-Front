@@ -7,7 +7,7 @@
             </svg>
             <input type="text" v-model="searchRewardsQuery" placeholder="Buscar recompensas..." class="search-input" />
         </div>
-        <button class="primary-btn" @click="openModal('addReward')">
+        <button class="primary-btn" @click="openModal('addReward')" v-if="authStore.user.name == 'Admin'">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -157,7 +157,7 @@
                     <button class="modal-btn secondary" @click="closeModal">Cancelar</button>
                     <button class="modal-btn primary" @click="saveReward" :disabled="isSubmitting">
                         <span v-if="!isSubmitting">{{ modalType === 'addReward' ? 'Crear Recompensa' : 'Guardar Cambios'
-                            }}</span>
+                        }}</span>
                         <span v-else class="loading-text">
                             <svg class="spinner-small" viewBox="0 0 24 24">
                                 <circle class="spinner-circle" cx="12" cy="12" r="10" fill="none" stroke="currentColor"
@@ -179,6 +179,8 @@ import rewardService from '@/api/Admin/RewardService.js';
 import Swal from 'sweetalert2';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
+const authStore = useAuthStore();
+console.log("Usuario actual:", authStore.user.name);
 
 
 const searchRewardsQuery = ref('');
