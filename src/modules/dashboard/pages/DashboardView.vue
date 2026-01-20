@@ -429,8 +429,6 @@ const handleLogout = async () => {
 onMounted(async () => {
   await Promise.all([
     fetchBalance(),
-    fetchTransactions(),
-    fetchRedemptions(),
     fetchRewards()
   ]);
 });

@@ -213,10 +213,7 @@ const confirmRedeem = async () => {
             premio_id: selectedReward.value.id
         };
 
-        console.log("Payload de canje:", payload);
-
         const response = await redeemService.postRedeem(payload);
-        console.log("Respuesta del canje:", response);
 
         // Notificación de éxito
         await Swal.fire({

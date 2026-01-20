@@ -222,8 +222,6 @@ const fetchRewards = async (page = 1) => {
     isLoadingRewards.value = true;
     try {
         const response = await rewardsService.fetchAllRewards(page);
-        console.log("Respuesta de premios:", response);
-
         // Según tu JSON: .data son los premios y .pagination es el control
         rewards.value = response.data;
         paginationInfo.value = response.pagination;
