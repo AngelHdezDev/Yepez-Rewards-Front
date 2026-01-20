@@ -52,7 +52,14 @@
             <div v-else class="rewards-grid">
                 <div v-for="reward in rewards" :key="reward.id" class="reward-card">
                     <div class="reward-image">
-                        <img :src="reward.image || '/placeholder-reward.jpg'" :alt="reward.name">
+                        <img v-if="reward.image_url" :src="getImageUrl(reward.image_url)" :alt="reward.name">
+                        <div v-else class="placeholder-image">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
+                            </svg>
+                        </div>
 
                         <div v-if="reward.stock < 5 && reward.stock > 0" class="stock-badge low">
                             ¡Últimas unidades!
@@ -215,6 +222,7 @@ const fetchRewards = async (page = 1) => {
     isLoadingRewards.value = true;
     try {
         const response = await rewardsService.fetchAllRewards(page);
+        console.log("Respuesta de premios:", response);
 
         // Según tu JSON: .data son los premios y .pagination es el control
         rewards.value = response.data;
@@ -225,6 +233,14 @@ const fetchRewards = async (page = 1) => {
     } finally {
         isLoadingRewards.value = false;
     }
+};
+
+const getImageUrl = (path) => {
+    if (!path) return null;
+    // Esto facilita cambiar la URL cuando subas el proyecto a un servidor real
+    // const baseUrl = 'https://acumuladoresyep.com/laravel_backend/public/storage/';
+    const baseUrl = 'http://127.0.0.1:8000/storage/';
+    return `${baseUrl}${path}`;
 };
 
 const formatPoints = (points) => new Intl.NumberFormat('es-MX').format(points);
@@ -271,7 +287,7 @@ const confirmRedeem = async () => {
 
         // Actualizar el saldo localmente para que la UI se refresque
         authStore.balance -= selectedReward.value.cost_in_points;
-        window.location.reload();   
+        window.location.reload();
 
         closeRedeemModal();
     } catch (error) {
@@ -287,6 +303,21 @@ onMounted(() => fetchRewards(1));
 </script>
 
 <style scoped>
+.placeholder-image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #cbd5e1;
+}
+
+.placeholder-image svg {
+    width: 4rem;
+    height: 4rem;
+    stroke-width: 1.5;
+}
+
 .pagination-controls {
     display: flex;
     justify-content: center;
@@ -1073,7 +1104,7 @@ onMounted(() => fetchRewards(1));
     .catalog-page {
         padding: 3rem;
     }
-    
+
     .rewards-grid-premium {
         grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     }
@@ -1084,16 +1115,16 @@ onMounted(() => fetchRewards(1));
     .catalog-page {
         padding: 2rem;
     }
-    
+
     .main-title {
         font-size: 2.25rem;
     }
-    
+
     .rewards-grid-premium {
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: 1.5rem;
     }
-    
+
     .catalog-header {
         gap: 1.5rem;
     }
@@ -1104,53 +1135,53 @@ onMounted(() => fetchRewards(1));
     .catalog-page {
         padding: 1.5rem;
     }
-    
+
     .catalog-header {
         flex-direction: column;
         align-items: stretch;
         gap: 1.5rem;
     }
-    
+
     .main-title {
         font-size: 2rem;
     }
-    
+
     .balance-card {
         width: 100%;
         justify-content: space-between;
         padding: 1.25rem 1.5rem;
     }
-    
+
     .controls-section {
         margin-bottom: 2rem;
     }
-    
+
     .filter-pills {
         flex-wrap: nowrap;
         overflow-x: auto;
         padding-bottom: 0.75rem;
     }
-    
+
     .rewards-grid-premium {
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
         gap: 1.25rem;
     }
-    
+
     .premium-card:hover {
         transform: translateY(-5px);
     }
-    
+
     .pagination-controls {
         gap: 1rem;
         padding: 1rem 0;
         margin-top: 2rem;
     }
-    
+
     .pagination-controls button {
         padding: 0.5rem 1rem;
         font-size: 0.8125rem;
     }
-    
+
     /* Rewards Section Tablet */
     .rewards-section {
         padding: 1.5rem;
@@ -1189,77 +1220,77 @@ onMounted(() => fetchRewards(1));
     .catalog-page {
         padding: 1.25rem;
     }
-    
+
     .main-title {
         font-size: 1.75rem;
     }
-    
+
     .subtitle {
         font-size: 1rem;
     }
-    
+
     .balance-card {
         flex-direction: column;
         align-items: flex-start;
         gap: 1rem;
         padding: 1.25rem;
     }
-    
+
     .balance-details .amount {
         font-size: 1.5rem;
     }
-    
+
     .search-bar {
         max-width: 100%;
     }
-    
+
     .search-bar input {
         padding: 0.875rem 0.875rem 0.875rem 3rem;
         font-size: 0.9375rem;
     }
-    
+
     .rewards-grid-premium {
         grid-template-columns: 1fr;
         gap: 1rem;
     }
-    
+
     .premium-card {
         border-radius: 1.25rem;
     }
-    
+
     .reward-media {
         height: 200px;
     }
-    
+
     .reward-body {
         padding: 1.5rem;
     }
-    
+
     .reward-name {
         font-size: 1.125rem;
     }
-    
+
     .reward-description {
         font-size: 0.875rem;
         margin-bottom: 1.25rem;
     }
-    
+
     .action-button {
         padding: 0.875rem;
         font-size: 0.9375rem;
     }
-    
+
     .pagination-controls {
         flex-wrap: wrap;
         gap: 0.75rem;
         margin-top: 1.5rem;
     }
-    
+
     .pagination-controls button {
         padding: 0.5rem 0.875rem;
         font-size: 0.75rem;
     }
-    
+
     .pagination-controls span {
         font-size: 0.75rem;
         padding: 0.375rem 0.75rem;
@@ -1267,7 +1298,7 @@ onMounted(() => fetchRewards(1));
         width: 100%;
         text-align: center;
     }
-    
+
     /* Rewards Section Mobile */
     .rewards-section {
         padding: 1.25rem;
@@ -1382,116 +1413,116 @@ onMounted(() => fetchRewards(1));
     .catalog-page {
         padding: 1rem;
     }
-    
+
     .catalog-header {
         margin-bottom: 2rem;
         gap: 1.25rem;
     }
-    
+
     .main-title {
         font-size: 1.5rem;
     }
-    
+
     .subtitle {
         font-size: 0.875rem;
     }
-    
+
     .balance-card {
         padding: 1rem;
         border-radius: 1rem;
     }
-    
+
     .balance-icon {
         padding: 0.625rem;
     }
-    
+
     .balance-icon svg {
         width: 1.5rem;
         height: 1.5rem;
     }
-    
+
     .balance-details .label {
         font-size: 0.6875rem;
     }
-    
+
     .balance-details .amount {
         font-size: 1.375rem;
     }
-    
+
     .controls-section {
         gap: 1.25rem;
     }
-    
+
     .filter-pills {
         gap: 0.5rem;
     }
-    
+
     .pill {
         padding: 0.5rem 1.25rem;
         font-size: 0.875rem;
     }
-    
+
     .rewards-grid-premium {
         gap: 0.875rem;
     }
-    
+
     .premium-card {
         border-radius: 1rem;
     }
-    
+
     .reward-media {
         height: 180px;
     }
-    
+
     .pts-floating-tag {
         padding: 0.375rem 0.75rem;
         font-size: 0.75rem;
         border-radius: 0.5rem;
     }
-    
+
     .premium-badge {
         padding: 0.375rem 0.75rem;
         font-size: 0.6875rem;
     }
-    
+
     .reward-body {
         padding: 1.25rem;
     }
-    
+
     .reward-name {
         font-size: 1.0625rem;
         margin-bottom: 0.5rem;
     }
-    
+
     .reward-description {
         font-size: 0.8125rem;
         margin-bottom: 1rem;
         -webkit-line-clamp: 3;
     }
-    
+
     .action-button {
         padding: 0.75rem;
         font-size: 0.875rem;
         border-radius: 0.875rem;
     }
-    
+
     .btn-arrow {
         width: 1rem;
         height: 1rem;
     }
-    
+
     .pagination-controls {
         gap: 0.5rem;
         margin-top: 1.25rem;
         padding: 0.875rem 0;
     }
-    
+
     .pagination-controls button {
         padding: 0.4375rem 0.75rem;
         font-size: 0.6875rem;
         border-radius: 0.375rem;
     }
-    
+
     /* Rewards Section Small Mobile */
     .rewards-section {
         padding: 1rem;
@@ -1567,45 +1598,45 @@ onMounted(() => fetchRewards(1));
     .catalog-page {
         padding: 0.75rem;
     }
-    
+
     .main-title {
         font-size: 1.375rem;
     }
-    
+
     .balance-card {
         padding: 0.875rem;
     }
-    
+
     .balance-details .amount {
         font-size: 1.25rem;
     }
-    
+
     .pill {
         padding: 0.4375rem 1rem;
         font-size: 0.8125rem;
     }
-    
+
     .rewards-grid-premium {
         gap: 0.75rem;
     }
-    
+
     .reward-media {
         height: 160px;
     }
-    
+
     .reward-body {
         padding: 1rem;
     }
-    
+
     .pagination-controls button {
         font-size: 0.625rem;
         padding: 0.375rem 0.625rem;
     }
-    
+
     .pagination-controls span {
         font-size: 0.6875rem;
     }
-    
+
     /* Rewards Section Very Small Mobile */
     .rewards-section {
         padding: 0.875rem;
@@ -1637,18 +1668,18 @@ onMounted(() => fetchRewards(1));
     .premium-card:hover {
         transform: none;
     }
-    
+
     .reward-card:hover {
         transform: none;
     }
-    
+
     .action-button:hover,
     .redeem-button:hover,
     .modal-button:hover,
     .view-all-button:hover {
         transform: none;
     }
-    
+
     .pagination-controls button:not(:disabled):hover {
         transform: none;
     }

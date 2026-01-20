@@ -21,7 +21,14 @@
         <div v-else class="rewards-grid">
             <div v-for="reward in rewards" :key="reward.id" class="reward-card">
                 <div class="reward-image">
-                    <img :src="reward.image || '/placeholder-reward.jpg'" :alt="reward.name">
+                    <img v-if="reward.image_url" :src="getImageUrl(reward.image_url)" :alt="reward.name">
+                    <div v-else class="placeholder-image">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                    </div>
 
                     <div v-if="reward.stock < 5 && reward.stock > 0" class="stock-badge low">
                         ¡Últimas unidades!
@@ -231,10 +238,33 @@ const confirmRedeem = async () => {
     }
 };
 
+const getImageUrl = (path) => {
+    if (!path) return null;
+    // Esto facilita cambiar la URL cuando subas el proyecto a un servidor real
+    // const baseUrl = 'https://acumuladoresyep.com/laravel_backend/public/storage/';
+    const baseUrl = 'http://127.0.0.1:8000/storage/';
+    return `${baseUrl}${path}`;
+};
+
 onMounted(fetchRewards);
 </script>
 
 <style scoped>
+.placeholder-image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #cbd5e1;
+}
+
+.placeholder-image svg {
+    width: 4rem;
+    height: 4rem;
+    stroke-width: 1.5;
+}
+
 /* Rewards Section */
 .rewards-section,
 .transactions-section {
