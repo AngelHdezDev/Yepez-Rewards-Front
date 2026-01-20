@@ -103,36 +103,7 @@
 
           <!-- Recent Activity -->
           <div class="content-grid">
-            <div class="content-card">
-              <div class="card-header">
-                <h3 class="card-title">Actividad Reciente</h3>
-              </div>
-              <div class="activity-list">
-                <div v-for="activity in recentActivity" :key="activity.id" class="activity-item">
-                  <div class="activity-icon" :class="activity.type">
-                    <svg v-if="activity.type === 'user'" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                      stroke-width="2">
-                      <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                      <circle cx="8.5" cy="7" r="4"></circle>
-                      <line x1="20" y1="8" x2="20" y2="14"></line>
-                      <line x1="23" y1="11" x2="17" y2="11"></line>
-                    </svg>
-                    <svg v-else-if="activity.type === 'reward'" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                      stroke-width="2">
-                      <circle cx="12" cy="8" r="7"></circle>
-                      <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
-                    </svg>
-                    <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                  </div>
-                  <div class="activity-content">
-                    <p class="activity-text">{{ activity.text }}</p>
-                    <span class="activity-time">{{ activity.time }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <RecentActivity></RecentActivity>
 
             <div class="content-card">
               <div class="card-header">
@@ -171,6 +142,7 @@
               </div>
             </div>
           </div>
+
         </div>
 
         <!-- Users View -->
@@ -453,6 +425,9 @@ import sucursalesService from '@/api/Admin/SucursalesService';
 import branchService from '@/api/Admin/BranchService';
 import rewardService from '@/api/Admin/RewardService.js';
 import CardsDashboard from '@/components/Admin/CardsDashboard.vue';
+import RecentActivity from '@/components/Admin/RecentActivity.vue';
+
+
 
 const router = useRouter();
 const authStore = useAuthStore();
