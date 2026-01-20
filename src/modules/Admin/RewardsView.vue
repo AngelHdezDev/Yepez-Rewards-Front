@@ -157,7 +157,7 @@
                     <button class="modal-btn secondary" @click="closeModal">Cancelar</button>
                     <button class="modal-btn primary" @click="saveReward" :disabled="isSubmitting">
                         <span v-if="!isSubmitting">{{ modalType === 'addReward' ? 'Crear Recompensa' : 'Guardar Cambios'
-                        }}</span>
+                            }}</span>
                         <span v-else class="loading-text">
                             <svg class="spinner-small" viewBox="0 0 24 24">
                                 <circle class="spinner-circle" cx="12" cy="12" r="10" fill="none" stroke="currentColor"
@@ -232,7 +232,7 @@ const resetForm = () => {
 const getImageUrl = (path) => {
     if (!path) return null;
     // Esto facilita cambiar la URL cuando subas el proyecto a un servidor real
-    const baseUrl = 'http://127.0.0.1:8000/storage/';
+    const baseUrl = 'https://acumuladoresyep.com/laravel_backend/public/storage/';
     return `${baseUrl}${path}`;
 };
 
