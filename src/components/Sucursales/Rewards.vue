@@ -86,8 +86,14 @@
                 </button>
 
                 <div v-if="selectedReward" class="modal-body">
-                    <div class="modal-image">
-                        <img :src="selectedReward.image || '/placeholder-reward.jpg'" :alt="selectedReward.name">
+                    <img v-if="selectedReward.image_url" :src="getImageUrl(selectedReward.image_url)"
+                        :alt="selectedReward.name">
+                    <div v-else class="placeholder-image">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
                     </div>
                     <h3 class="modal-title">{{ selectedReward.name }}</h3>
                     <p class="modal-description">{{ selectedReward.description }}</p>
@@ -225,6 +231,8 @@ const confirmRedeem = async () => {
 
         // Actualizar el saldo localmente para que la UI se refresque
         authStore.balance -= selectedReward.value.cost_in_points;
+        window.location.reload();
+
 
         closeRedeemModal();
     } catch (error) {

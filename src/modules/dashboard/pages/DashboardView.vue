@@ -257,41 +257,7 @@ const fetchBalance = async () => {
   }
 };
 
-// const fetchTransactions = async () => {
-//   isLoadingTransactions.value = true;
-//   try {
-//     // const response = await axios.get('/api/transactions');
-//     // transactions.value = response.data;
 
-//     // Datos de ejemplo
-//     transactions.value = [
-//       { id: 1, type: 'add', description: 'Compra de batería 12V', points: 500, created_at: '2024-11-05' },
-//       { id: 2, type: 'subtract', description: 'Canje: Tarjeta de regalo $500', points: 1000, created_at: '2024-11-04' },
-//       { id: 3, type: 'add', description: 'Compra de batería 24V', points: 800, created_at: '2024-11-03' },
-//       { id: 4, type: 'add', description: 'Bonificación especial', points: 200, created_at: '2024-11-02' },
-//       { id: 5, type: 'subtract', description: 'Canje: Descuento $100', points: 300, created_at: '2024-11-01' }
-//     ];
-//   } catch (error) {
-//     console.error('Error al obtener transacciones:', error);
-//   } finally {
-//     isLoadingTransactions.value = false;
-//   }
-// };
-
-// const fetchRedemptions = async () => {
-//   try {
-//     // const response = await axios.get('/api/redemptions');
-//     // redemptions.value = response.data;
-
-//     // Datos de ejemplo
-//     redemptions.value = [
-//       { id: 1, reward_name: 'Tarjeta de regalo $500', status: 'completed' },
-//       { id: 2, reward_name: 'Descuento $100', status: 'completed' }
-//     ];
-//   } catch (error) {
-//     console.error('Error al obtener canjes:', error);
-//   }
-// };
 
 const fetchRewards = async () => {
   isLoadingRewards.value = true;
