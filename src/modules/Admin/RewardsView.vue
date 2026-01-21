@@ -180,7 +180,7 @@ import Swal from 'sweetalert2';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
 const authStore = useAuthStore();
-console.log("Usuario actual:", authStore.user.name);
+
 
 
 const searchRewardsQuery = ref('');
@@ -234,7 +234,7 @@ const resetForm = () => {
 const getImageUrl = (path) => {
     if (!path) return null;
     // Esto facilita cambiar la URL cuando subas el proyecto a un servidor real
-    //const baseUrl = 'https://acumuladoresyep.com/laravel_backend/public/storage/';
+    // const baseUrl = 'https://acumuladoresyep.com/laravel_backend/public/storage/';
     const baseUrl = 'http://127.0.0.1:8000/storage/';
     return `${baseUrl}${path}`;
 };

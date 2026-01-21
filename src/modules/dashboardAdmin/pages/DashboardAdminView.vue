@@ -431,7 +431,7 @@ import RecentActivity from '@/components/Admin/RecentActivity.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
-console.log('Auth Store User:', authStore.user.name);
+
 const imagePreview = ref(null);
 const selectedFile = ref(null);
 const fileInput = ref(null);
